@@ -248,15 +248,32 @@ ktrim=r \
 useshortkmers=T \
 mink=5 \
 qtrim=10 \
-minlength=20'
-```  
+minlength=20
+```
 
-
-
-  
 ### 4. Alignment with STAR  
 
-  
+Now we have our trimmed reads, we can align them to a reference transcriptome or a genome. For this analysis we have;  
+* *Orbicella faveolata* -> https://matzlab.weebly.com/data--code.html
+* *Montastrea cavernosa* -> https://www.ncbi.nlm.nih.gov/assembly/GCF_002042975.1/  
+
+This requires two steps  
+
+#### 4.1 Genome Indexing  
+
+We first need to generate a genome index for STAR to align our trimmed reads against. 
+
+*Orbicella faveolata*
+```bash
+
+```
+
+*Montastrea cavernosa*
+```bash
+
+```
+
+
 ### 5. Quantification with Salmon  
 
   
