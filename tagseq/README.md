@@ -96,7 +96,9 @@ https://www.lexogen.com/quantseq-data-analysis/
 
 ### 1. Sample Mangement  
 
-Once we get our reads back from sequencing we need to do a few things to get them ready for our next pipeline steps. This can depend on your sequencing machine as well as the facility that does it. Below is how I receive them from Bill and the steps I do to prep them.
+Once we get our reads back from sequencing we need to do a few things to get them ready for our next pipeline steps. This can depend on your sequencing machine as well as the facility that does it. Below is how I receive them from Bill and the steps I do to prep them.  
+
+N.B you can do this on a supercomputer (to speed up) or on your desktop/laptop. For 20ish samples thats okay but with 300 I would whole heartedly recomend a super computer or a dedicated desktop with large amounts of RAM. 
 
 (screenshot raw reads from Bill)  
 
@@ -111,7 +113,8 @@ cd path>to>rawreads
 # making variable with all the raw reads in the file we have cd to
 SAMPLES=`ls|echo`
 
-# for loop that iterates through all the files stored in the SAMPLE variable, and then runs a sed command \ which removes the info at the beginning and maintains the important information for subsequent steps
+# for loop that iterates through all the files stored in the SAMPLE variable, and then runs a sed command 
+# which removes the info at the beginning and maintains the important information for subsequent steps
 for SAMPLES in *
 do
 FILES=`echo $SAMPLES | sed 's/nKnowles_TagSeq06012020_\([0-9r]*-01_S_._.\.txt\.bz2\)/\1/'`
@@ -120,21 +123,90 @@ mv "${SAMPLES}" "${FILES}"
 done
 ```
 
-This is just a basic for loop in Unix Bash. The sed command is a little more complex but there are alot of good resources you can find googling to help with these. 
+This is just a basic for loop in Unix Bash. The sed command is a little more complex but there are alot of good resources you can find googling to help with these. As such I am not going to go into this more. 
 
 #### Step 2. Unzipping Files  
 
+This probably is not necessary, but I was having trouble with a later step if I did not do this. This can take a while if on a desktop or laptop. 
 
 ```bash
 bzip2 -d -v -k *
 ```
 
-
 #### Step 3. Merging Flow Cell Reads  
+
+As mentioned above, each sample has a **S_1_1** or **S_2_1**. All this is is  
+* S_1_1 = lane 1 read 1
+* S_2_1 = lane 2 read 1  
+
+All we have to do is therfore merge them and then we will have all reads for each sample in one file.  
+
+```bash
+# moving into raw read folder
+cd path/to/rawread/folder
+
+# variable with all samples in the folder
+SAMPLES=`ls|echo`
+
+# for loop that runs through all samples and says to add S_1_1 and S_2_1 together and make a new folder. 
+for SAMPLES in *
+do
+FILES=`echo $SAMPLES | sed 's/\([0-9r]*-01\).*/\1/'`
+echo ${FILES}
+cat "${FILES}_S_1_1.txt" "${FILES}_S_2_1.txt" > "${FILES}.txt"
+done
+
+# deleting all the S_x_1 files 
+# N.B you may want to mv these for archiving if you want. 
+rm -r *_S_*_1.txt
+```
 
 #### Step 4. Renaming to .fastq  
 
-#### Step 5. Rezipping for Upload to Supercomputer
+This could realistically be done in the last command when we concatenate and name the new folder. Regardless, this is then how you do this.  
+
+```bash
+# moving into raw read folder
+cd path/to/rawread/folder
+
+# variable with all samples in the folder
+SAMPLES=`ls|echo`
+
+# for loop that takes variable, and then 
+for SAMPLES in *
+do
+FILES=`echo $SAMPLES | cut -f 1 -d '.'`
+echo ${FILES}
+mv "${SAMPLES}" "${FILES}.fastq"
+done
+```
+
+### Step 5. Renaming to more useful sample names  
+
+I submitted these in HIG ID tubes supplied by the squencing facility. As such, they are just a bunch of numbers that can be read by robots for automation. This is not helpful and I like to switch as early as possible so all subsequent files are labelled as our sample information
+
+```bash
+# moving into raw read folder
+cd path/to/rawread/folder
+
+# awk command to match the HIG ID with our sample name in a mapping csv file made. 
+awk -F',' 'system("mv " $1 " " $2)' ~/Desktop/mappingFile.csv
+```
+
+#### Step 5. Rezipping for Upload to Supercomputer  
+
+I have a dedicated desktop from IT department to do all this so I can leave running in background. As such I just rezip these for upload to superocmputer for a few reasons 
+* Smaller files 
+* Quicker upload 
+* Downstream tools can access bzipped files 
+
+```bash 
+# moving into raw read folder
+cd path/to/rawread/folder
+
+# bzipping 
+bzip -z *
+```
 
 
 ### 2. Quality Control  
