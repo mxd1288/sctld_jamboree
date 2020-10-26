@@ -111,7 +111,7 @@ cd path>to>rawreads
 # making variable with all the raw reads in the file we have cd to
 SAMPLES=`ls|echo`
 
-# for loop that iterates through all the files stored in the SAMPLE variable, and then runs a sed command which removes the info at the beginning and maintains the important information for subsequent steps
+# for loop that iterates through all the files stored in the SAMPLE variable, and then runs a sed command \ which removes the info at the beginning and maintains the important information for subsequent steps
 for SAMPLES in *
 do
 FILES=`echo $SAMPLES | sed 's/nKnowles_TagSeq06012020_\([0-9r]*-01_S_._.\.txt\.bz2\)/\1/'`
