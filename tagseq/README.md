@@ -108,6 +108,12 @@ Once we get our reads back from sequencing we need to do a few things to get the
 
 > bzip2 -d -v -k *
 
+```bash
+{
+  bzip2 -d -v -k *
+}
+```
+
 
 #### Step 3. Merging Flow Cell Reads  
 
