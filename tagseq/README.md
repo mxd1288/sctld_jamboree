@@ -106,12 +106,9 @@ Once we get our reads back from sequencing we need to do a few things to get the
 
 #### Step 2. Unzipping Files  
 
-> bzip2 -d -v -k *
 
 ```bash
-{
-  bzip2 -d -v -k *
-}
+bzip2 -d -v -k *
 ```
 
 
