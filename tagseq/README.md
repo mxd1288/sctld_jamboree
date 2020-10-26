@@ -295,8 +295,24 @@ This is also memory intensive and so should be run on a superocmputer or cluster
   
 ### 5. Quantification with Salmon  
 
+Now we have our aligned reads we need to quantify them in a way so that we can import them into R and Rstudio for subsequent analysis. Salmon does these 'wicked fast' and generates a quant.sf for each sample that has the counts for each gene in it. 
+
+*Orbicella faveolata*
+```bash
+
+```  
+
+*Montastrea cavernosa*
+```bash
+
+```  
+
   
-### 6. Differential Expression Analysis
+### 6. Differential Expression Analysis  
+
+Now we have our reads quantified for each sample we can start to visualise and do statistical analysis on our samples. This is **now in R and RStudio** and will be what everyone is doing for the remainder of the Jamboree.  
+
+I will show you how to read in samples using **Tximport** and then we will be following the DeSeq2 vignette from Love *et al* - https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
 
 
