@@ -9,7 +9,7 @@ These samples were sequenced on a Nova-seq (at the University of Miami Center fo
 
 ### General RNA-seq analysis Overview  
 
-TAG-seq employs a very similar pipeline to traditional RNA-seq with a few tweaks due to how library prep is performed (see Fig below from Conesa *et al* (2016)). The paper by Conesa *et al* (2016) is still a very good overview for best practices in regards to TAG-seq analysis. 
+TAG-seq employs a very similar pipeline to traditional RNA-seq with a few tweaks due to how library prep is performed (see Fig below from Conesa *et al* (2016)). The paper by Conesa *et al* (2016) is still a very good overview for best practices in regards to TAG-seq analysis (https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8)
 
 ![alt text here](./example_figures/RNAseq_overview.png)  
 
@@ -49,36 +49,40 @@ YOU DO NOT NEED TO DOWNLOAD AND INSTALL ALL OF THESE. They are here for your ref
 I would recommend reading through and having a decent grasp of what each program does and where it falls in the TAG-seq pipeline.  
 
 * FastQC  
-  + Paper - 
-  + Manual - 
+  + Webpage - https://www.bioinformatics.babraham.ac.uk/projects/fastqc/ 
 
-* BBDuk  
-  + Paper - 
-  + Manual - 
+* BBDuk (part of bbtools - https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/)
+  + Webpage - https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/
   
 * STAR
-  + Paper - 
-  + Manual - 
+  + Paper - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/
+  + Manual - https://physiology.med.cornell.edu/faculty/skrabanek/lab/angsd/lecture_notes/STARmanual.pdf
+  + Worked example - https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html
 
 * Salmon
-  + Paper - 
-  + Manual - 
+  + Paper - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5600148/
+  + Manual - https://salmon.readthedocs.io/en/latest/salmon.html# 
 
 * Tximport
-  + Paper - 
-  + Manual - 
+  + Manual - https://bioconductor.org/packages/release/bioc/manuals/tximport/man/tximport.pdf
+  + Vignette - https://bioconductor.org/packages/release/bioc/vignettes/tximport/inst/doc/tximport.html
 
-* Differential Expression
+* Differential Expression  (see a blog from Michael Love about which is best - https://mikelove.wordpress.com/2016/09/28/deseq2-or-edger/)
   + DeSeq2
-    + Paper - 
-    + Manual - 
+    + Paper - https://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0550-8
+    + Manual - https://bioconductor.org/packages/release/bioc/manuals/DESeq2/man/DESeq2.pdf
+    + Vignette - https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
   + EdgeR
-    + Paper - 
-    + Manual - 
+    + Paper - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2796818/
+    + Manual - http://bioconductor.org/packages/release/bioc/manuals/edgeR/man/edgeR.pdf
+    + Vignette - http://bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf
   + Limma Voom
-    + Paper - 
-    + Manual - 
+    + Paper - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4402510/
+    + Manual - http://bioconductor.org/packages/release/bioc/manuals/limma/man/limma.pdf
+    + Vignette - http://bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf  
+    
 
+**PLEASE NOTE** there are more resources for all of these out there, these are just some of the best ones in my opinion. 
 
 
 
