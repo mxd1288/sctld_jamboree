@@ -192,8 +192,8 @@ cd path/to/rawread/folder
 # awk command to match the HIG ID with our sample name in a mapping csv file made. 
 awk -F',' 'system("mv " $1 " " $2)' ~/Desktop/mappingFile.csv
 ```
-
-#### Step 5. Rezipping for Upload to Supercomputer  
+  
+#### Step 6. Rezipping for Upload to Supercomputer  
 
 I have a dedicated desktop from IT department to do all this so I can leave running in background. As such I just rezip these for upload to superocmputer for a few reasons 
 * Smaller files 
@@ -208,21 +208,58 @@ cd path/to/rawread/folder
 bzip -z *
 ```
 
-
+  
 ### 2. Quality Control  
 
-These step is one to make sure your received raw reads are of okay quality, and to allow you to see how you should go about trimming. As said previously, I use the recommendations from Lexogen as they know what the best parameters are. 
+These step is one to make sure your received raw reads are of okay quality, and to allow you to see how you should go about trimming. 
 
+This screenshot shows the outputs I am interested in for FastQC.  
 
+(screenshots tiles of importance)
+
+As we can see, quality decreases as you progress left to right, and we also have a high adapter content as well as some funky sequence content. We will therfore take these into consideration with the trimming step next.  
+
+For in depth info on each tab see: https://rtsf.natsci.msu.edu/genomics/tech-notes/fastqc-tutorial-and-faq/#:~:text=The%20output%20from%20FastQC%2C%20after,or%20%E2%80%9CFail%E2%80%9D%20is%20assigned.
+
+  
 ### 3. Trimming with BBDuk  
 
+There are multiple tools you can use for trimming but I am now using BBDuk instead of ones like trimmomatic. The reason, its easier and also is part of a whole suite of very useful tools (BBTools). As said previously, I use the recommendations from Lexogen as they know what the best parameters are (https://www.lexogen.com/quantseq-data-analysis/)
 
+```bash
+# moving into raw read folder
+cd path/to/rawread/folder
+
+# variable with all files saved for the for loop
+# the cut removes the .fastq.bz2 and leaves just sample names
+PALMATA=`ls | cut -f 1 -d '.'`
+
+# for loop to run through files recursively 
+# the \ allows you to seperate by line, otherwise this would all be on one line and is ugly as
+for PALPAL in $PALMATA
+do
+bbduk.sh \
+-Xmx200m \
+in=/scratch/projects/transcriptomics/ben_young/POR/tagseq/raw_reads/all_raw/'"${PALPAL}"'.fastq \
+out=/scratch/projects/transcriptomics/ben_young/POR/tagseq/host/trimmed_reads/'"${PALPAL}"'_tr.fastq \
+ref=/nethome/bdy8/programs/bbmap/resources/polyA.fa.gz,/nethome/bdy8/programs/bbmap/resources/truseq_rna.fa.gz \
+k=13 \
+ktrim=r \
+useshortkmers=T \
+mink=5 \
+qtrim=10 \
+minlength=20'
+```  
+
+
+
+  
 ### 4. Alignment with STAR  
 
-
+  
 ### 5. Quantification with Salmon  
 
-
+  
 ### 6. Differential Expression Analysis
 
 
