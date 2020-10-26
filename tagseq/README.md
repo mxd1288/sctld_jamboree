@@ -61,7 +61,7 @@ I would recommend reading through and having a decent grasp of what each program
 
 * Salmon
   + Paper - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5600148/
-  + Manual - https://salmon.readthedocs.io/en/latest/salmon.html# 
+  + Manual/Vignette - https://salmon.readthedocs.io/en/latest/salmon.html# 
 
 * Tximport
   + Manual - https://bioconductor.org/packages/release/bioc/manuals/tximport/man/tximport.pdf
@@ -85,6 +85,21 @@ I would recommend reading through and having a decent grasp of what each program
 **PLEASE NOTE** there are more resources for all of these out there, these are just some of the best ones in my opinion. 
 
 
+## TAG-seq SCTLD Analysis  
+
+### 1. Quality Control  
+
+
+### 2. Trimming with BBDuk  
+
+
+### 3. Alignment with STAR  
+
+
+### 4. Quantification with Salmon  
+
+
+### 5. Differential Expression Analysis
 
 
 
