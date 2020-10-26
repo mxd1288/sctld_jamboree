@@ -11,7 +11,7 @@ These samples were sequenced on a Nova-seq (at the University of Miami Center fo
 
 TAG-seq employs a very similar pipeline to traditional RNA-seq with a few tweaks due to how library prep is performed (see Fig below from Conesa *et al* (2016)). The paper by Conesa *et al* (2016) is still a very good overview for best practices in regards to TAG-seq analysis (https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8)
 
-![alt text here](./example_figures/RNAseq_overview.png)  
+![alt text here](./example_figures/RNAseqoverview.png)  
 
 ### TAG-seq VS RNA-Seq  
 
