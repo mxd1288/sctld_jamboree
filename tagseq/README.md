@@ -82,8 +82,11 @@ I would recommend reading through and having a decent grasp of what each program
     + Vignette - http://bioconductor.org/packages/release/bioc/vignettes/limma/inst/doc/usersguide.pdf  
     
 
-**PLEASE NOTE** there are more resources for all of these out there, these are just some of the best ones in my opinion. 
+**PLEASE NOTE** there are more resources for all of these out there, these are just some of the best ones in my opinion.  
 
+I also thought it would be useful to have the Pegasus help faq as for large numbers of samples you should not run any of this (apart from the differential expression analysis) on your desktop. 
+
+https://acs-docs.readthedocs.io/pegasus/README.html 
 
 ## TAG-seq SCTLD Analysis  
 
@@ -261,7 +264,7 @@ This requires two steps
 
 #### 4.1 Genome Indexing  
 
-We first need to generate a genome index for STAR to align our trimmed reads against. 
+We first need to generate a genome index for STAR to align our trimmed reads against. This requires **ALOT** of RAM so this should be done on the supercomputer (I use Pegasus for mine). 
 
 *Orbicella faveolata*
 ```bash
@@ -272,8 +275,24 @@ We first need to generate a genome index for STAR to align our trimmed reads aga
 ```bash
 
 ```
+  
 
+#### 4.2 Alignment to Indexed Genome  
 
+We now use our generated genome index for alignment to our raw trimmed reads.  
+
+This is also memory intensive and so should be run on a superocmputer or cluster. Again, we are using the redcomended parameters from the lexogen data analysis page (https://www.lexogen.com/quantseq-data-analysis/)
+
+*Orbicella faveolata*
+```bash
+
+```  
+
+*Montastrea cavernosa*
+```bash
+
+```  
+  
 ### 5. Quantification with Salmon  
 
   
