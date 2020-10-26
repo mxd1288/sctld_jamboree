@@ -11,7 +11,7 @@ These samples were sequenced on a Nova-seq (at the University of Miami Center fo
 
 TAG-seq employs a very similar pipeline to traditional RNA-seq with a few tweaks due to how library prep is performed (see Fig below from Conesa *et al* (2016)). The paper by Conesa *et al* (2016) is still a very good overview for best practices in regards to TAG-seq analysis (https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0881-8)
 
-![alt text here](./example_figures/RNAseq_overview)  
+![alt text here](./example_figures/RNAseq_overview.png)  
 
 ### TAG-seq VS RNA-Seq  
 
@@ -19,7 +19,7 @@ I am not going to go into this in depth, but will link resources below if you wa
 
 The key part to understand is that traditional RNA-seq fragments mRNA and generates cDNA libraries for all these fragments. This means each mRNA molecule can have numerous cDNA molecules generated. TAG-seq does not do this but instead quantifies each mRNA molecule once by attaching at the 3' end of each molecule. This is highlighted in the summary figure below from Ma *et al* (2019).  
 
-![alt text here](./example_figures/tagseq_vs_rnaseq)  
+![alt text here](./example_figures/tagseq_vs_rnaseq.png)  
 
 A big difference betwenn TAG-seq and traditional RNA-seq is that we need an already avaliable genome or well annotated reference transcriptome if we want to do TAG-seq. This is why we are only doing two species (*Orbicella faveolata* and *Montastrea cavernosa*) with TAG-seq as the other species for these samples (*Pseudodiploria clivosa* and *Colophylia natans*) do not have avaliable resources required for analysis.  
 
