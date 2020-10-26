@@ -16,6 +16,7 @@ TAG-seq employs a very similar pipeline to traditional RNA-seq with a few tweaks
 ### TAG-seq VS RNA-Seq  
 
 I am not going to go into this in depth, but will link resources below if you want to read more into the difference between traditional RNA-seq an TAG-seq.  
+
 The key part to understand is that traditional RNA-seq fragments mRNA and generates cDNA libraries for all these fragments. This means each mRNA molecule can have numerous cDNA molecules generated. TAG-seq does not do this but instead quantifies each mRNA molecule once by attaching at the 3' end of each molecule. This is highlighted in the summary figure below from Ma *et al* (2019).  
 
 ![alt text here](./example_figures/tagseq_vs_rnaseq.png)  
@@ -38,6 +39,45 @@ Useful resources:
 
 * Another comparison of 3' and traditional - https://onlinelibrary.wiley.com/doi/full/10.1111/1755-0998.12529  
 
+* Slides for difference between 3' and traditional - https://ucdavis-bioinformatics-training.github.io/2017-June-RNA-Seq-Workshop/wednesday/TagSeqVSRnaSeq.pdf  
+
+
+### Software Resources  
+
+YOU DO NOT NEED TO DOWNLOAD AND INSTALL ALL OF THESE. They are here for your reference so you can see the steps that we will be taking for this pipeline.  
+
+I would recommend reading through and having a decent grasp of what each program does and where it falls in the TAG-seq pipeline.  
+
+* FastQC  
+  + Paper - 
+  + Manual - 
+
+* BBDuk  
+  + Paper - 
+  + Manual - 
+  
+* STAR
+  + Paper - 
+  + Manual - 
+
+* Salmon
+  + Paper - 
+  + Manual - 
+
+* Tximport
+  + Paper - 
+  + Manual - 
+
+* Differential Expression
+  + DeSeq2
+    + Paper - 
+    + Manual - 
+  + EdgeR
+    + Paper - 
+    + Manual - 
+  + Limma Voom
+    + Paper - 
+    + Manual - 
 
 
 
@@ -48,11 +88,5 @@ Useful resources:
   Scripts for general TagSeq analyses provided by Matz Lab at UT Arlington:
   https://github.com/z0on/tag-based_RNAseq
   
-  Helpful slides higlighting difference between TagSeq and standard RNAseq:
-  https://ucdavis-bioinformatics-training.github.io/2017-June-RNA-Seq-Workshop/wednesday/TagSeqVSRnaSeq.pdf
-
-
-
-## RNAseq
 
   
