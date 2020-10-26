@@ -89,7 +89,7 @@ I would recommend reading through and having a decent grasp of what each program
 
 When analyzing 3' RNA-seq there is some slight variations compared to standard RNA-seq. Saying this, they are very small and it is mainly linked to program parameters.  
 
-Luckily, Lexogen provides a resource with the "optimal" settings for trimming and STAR alignment. When doing this analyses it is important to not **reinvent the wheel** so I have adapted my original RNA-seq workflow to incorporate their suggestions.  
+Luckily, Lexogen provides a resource with the "optimal" settings for trimming and STAR alignment. When doing this analyses it is important to not **reinvent the wheel** so I have adapted my original RNA-seq workflow to incorporate their suggestions ans save myself time and numerous headaches. 
 
 https://www.lexogen.com/quantseq-data-analysis/  
 
@@ -98,7 +98,22 @@ https://www.lexogen.com/quantseq-data-analysis/
 
 Once we get our reads back from sequencing we need to do a few things to get them ready for our next pipeline steps. This can depend on your sequencing machine as well as the facility that does it. Below is how I receive them from Bill and the steps I do to prep them. 
 
-(screenshot raw reads from Bill) 
+(screenshot raw reads from Bill)  
+
+#### Step 1. Removing Unwanted in Title
+
+(unix command for renaming)
+
+#### Step 2. Unzipping Files  
+
+> bzip2 -d -v -k *
+
+
+#### Step 3. Merging Flow Cell Reads  
+
+#### Step 4. Renaming to .fastq  
+
+#### Step 5. Rezipping for Upload to Supercomputer
 
 
 ### 2. Quality Control  
