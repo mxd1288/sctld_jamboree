@@ -87,25 +87,39 @@ I would recommend reading through and having a decent grasp of what each program
 
 ## TAG-seq SCTLD Analysis  
 
-### 1. Quality Control  
+When analyzing 3' RNA-seq there is some slight variations compared to standard RNA-seq. Saying this, they are very small and it is mainly linked to program parameters.  
+
+Luckily, Lexogen provides a resource with the "optimal" settings for trimming and STAR alignment. When doing this analyses it is important to not **reinvent the wheel** so I have adapted my original RNA-seq workflow to incorporate their suggestions.  
+
+https://www.lexogen.com/quantseq-data-analysis/  
 
 
-### 2. Trimming with BBDuk  
+### 1. Sample Mangement  
+
+Once we get our reads back from sequencing we need to do a few things to get them ready for our next pipeline steps. This can depend on your sequencing machine as well as the facility that does it. Below is how I receive them from Bill and the steps I do to prep them. 
+
+(screenshot raw reads from Bill) 
 
 
-### 3. Alignment with STAR  
+### 2. Quality Control  
+
+These step is one to make sure your received raw reads are of okay quality, and to allow you to see how you should go about trimming. As said previously, I use the recommendations from Lexogen as they know what the best parameters are. 
 
 
-### 4. Quantification with Salmon  
+### 3. Trimming with BBDuk  
 
 
-### 5. Differential Expression Analysis
+### 4. Alignment with STAR  
+
+
+### 5. Quantification with Salmon  
+
+
+### 6. Differential Expression Analysis
 
 
 
-## TagSeq
-  Scripts for general TagSeq analyses provided by Matz Lab at UT Arlington:
-  https://github.com/z0on/tag-based_RNAseq
+
   
 
   
