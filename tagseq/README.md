@@ -1,5 +1,18 @@
-# sctld_jamboree
-Scripts and data for speedy analysis of SCTLD transcriptomes 
+# SCTLD TAG-seq Jamboree  
+
+## Introduction  
+### General Overview
+
+Here you will find the scripts and pipeline for the analysis of the TAG-seq (3 prime RNA-seq) analysis of *Orbicella faveolata* and *Montastrea cavernosa*. This workflow assumes basic understanding of Unix bash and R languages, but following tutorials for each step should provide enough background.  
+
+These samples were sequenced on a Nova-seq (at the University of Miami Center for Genome Technology Core Facility) with single-end 100 base pair reads. 
+
+TAG-seq employs a very similar pipeline to traditional RNA-seq with a few tweaks due to how library prep is performed. This is explained briefly below. 
+
+![alt text here](./example_figures/RNAseq_overview.png)
+
+### General RNA-seq analysis Overview
+
 
 ## TagSeq
   Scripts for general TagSeq analyses provided by Matz Lab at UT Arlington:
