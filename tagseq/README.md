@@ -184,7 +184,7 @@ mv "${SAMPLES}" "${FILES}.fastq"
 done
 ```
 
-### Step 5. Renaming to more useful sample names  
+#### Step 5. Renaming to more useful sample names  
 
 I submitted these in HIG ID tubes supplied by the squencing facility. As such, they are just a bunch of numbers that can be read by robots for automation. This is not helpful and I like to switch as early as possible so all subsequent files are labelled as our sample information
 
