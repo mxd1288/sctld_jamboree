@@ -1,5 +1,8 @@
 # sctld_jamboree_RNAseq
-Scripts and data for speedy analysis of SCTLD transcriptomes of *Colpophyllia natans* and *Pseudodiploria clivosa*. This short course assumes some familiarity with Unix bash and R languages, but these skills can be supplemented by following the tutorials closely.
+
+The RNAseq section of the jamboree will focus on a coral species that do not have a reference genome assembly, *Colpophyllia natans*. Following the routine read QC and trimming steps, we will rely on de novo transcriptome assembly and annotation to create a new reference transcriptome we can use in the analysis of gene expression in control and SCTLD-infected colonies.
+
+This short course assumes some familiarity with Unix bash and R languages, but these skills can be supplemented by following the tutorials closely.
 
 The sequencing reads for this experiment were paired-end, 150-bp reads obtained from the Illumina NovaSeq instrument at the University of Miami Center for Genome Technology core facility.
 
@@ -17,9 +20,11 @@ Although you will not need to download and install all the following tools to co
 
 * Trimmomatic (paper: https://academic.oup.com/bioinformatics/article/30/15/2114/2390096, download: http://www.usadellab.org/cms/?page=trimmomatic)
 
-* STAR (paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/, manual: https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf)
+* Trinity for RNAseq de novo assembly: (paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3571712/, manual: https://github.com/trinityrnaseq/trinityrnaseq/wiki)
 
-* Trinity (paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3571712/, manual: https://github.com/trinityrnaseq/trinityrnaseq/wiki)
+* Annotation of de novo transcriptome: https://github.com/z0on/annotatingTranscriptomes
+
+* STAR (paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/, manual: https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf)
 
 * featureCounts (paper: https://academic.oup.com/bioinformatics/article/30/7/923/232889, manual: http://subread.sourceforge.net/)
 
