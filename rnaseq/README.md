@@ -7,14 +7,17 @@ The RNAseq section of the jamboree will focus on a coral species that do not hav
 
 The sequencing reads for this experiment were paired-end, 150-bp reads obtained from the Illumina NovaSeq instrument at the University of Miami Center for Genome Technology core facility.
 
-There are 4 healthy coral samples and 3 disease-infected samples included in this analysis. 
-K1
-K2
-K14
-K6
-K8
-K7
-K12
+There are reads from 4 healthy coral samples and 3 disease-infected samples included in this analysis. 
+
+Sample ID (K_ID) | Treatment    | Genotype  | Read Depth
+---------------- | ------------ | --------- | -----------
+K1               | Experimental | CN1       | 
+K2               | Control      | CN1       |
+K6               | Control      | CN4       |
+K7               | Control      | CN6       |
+K8               | Experimental | CN7       |
+K12              | Experimental | CN9       |
+K13              | Control      | CN9       |
 
 ## Generic roadmap for RNAseq analyses
 
@@ -43,11 +46,11 @@ Although you will not need to download and install all the following tools to co
 2. Transcriptome profiling
   * Trinity for RNAseq de novo assembly: (paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3571712/, manual: https://github.com/trinityrnaseq/trinityrnaseq/wiki)
   * Annotation of de novo transcriptome: https://github.com/z0on/annotatingTranscriptomes
-  * BLAST2GO
-  * Assess transcriptome completeness: BUSCO
+  * eggNOG-mapper (http://eggnog-mapper.embl.de/)
+  * Assess transcriptome completeness: BUSCO (https://busco.ezlab.org/)
   * STAR (paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3530905/, manual: https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf)
-  * Bowtie
-  * RSEM
+  * Bowtie (http://bowtie-bio.sourceforge.net/bowtie2/manual.shtml)
+  * Salmon (https://combine-lab.github.io/salmon/)
   * featureCounts (paper: https://academic.oup.com/bioinformatics/article/30/7/923/232889, manual: http://subread.sourceforge.net/)
 
 3. Differential expression analysis
@@ -59,23 +62,51 @@ Use these additional tutorials to supplement your knowledge of the specific step
 
 ## Specific steps for analyzing SCTLD transcriptomes
 
+Our pipeline will look like:
+![*Colpophyllia natans transcriptome assembly and analysis pipeline*](./example_figures/SCTLD_RNAseq_pipeline.png)
 
-### Quality control with FastQC and MultiQC
-
-
-
-### Read trimming with Trimmomatic
+### 1. Setup project folders, copy data and program files, ensure filenames are correct, etc.
 
 
+### 2. Quality control with FastQC
 
-### De novo transcriptome assembly with Trinity (*C. natans*)
+These code chunks are exmamples of how these jobs were submitted on Pegasus, the University of Miami's supercomputer cluster. 
+
+```bash
+bsub -P 
+```
+
+### 3. Read trimming with Trimmomatic
+
+```bash
+bsub -P 
+```
+
+### 4. De novo transcriptome assembly with Trinity (*C. natans*)
 
 ![Read mapping and transcript identification strategies. We will be taking option C, de novo transcriptome assembly](./example_figures/Conesa2016_Fig2.png)
 
-### Read quantification and counts table generation
+```bash
+bsub -P 
+```
+
+### 5. Alignment to transcriptome with Bowtie 
+
+```bash
+bsub -P 
+```
+
+### 6. Read quantification and counts table generation with Salmon
+
+```bash
+bsub -P 
+```
+
+### 7. Import transcript counts into R
 
 
-### Differential gene expression analysis
 
+### 8. Differential gene expression analysis with DESeq2
 
 This is where the course analyses come in.
+
