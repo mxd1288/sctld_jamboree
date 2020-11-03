@@ -11,16 +11,13 @@ These transcriptomes were obtained for species both with and without reference g
   https://github.com/z0on/tag-based_RNAseq
   
 
-    *Montastrea cavernosa*
+_Montastrea cavernosa_
   Genome resources from the Matz lab: https://matzlab.weebly.com/data--code.html
     
-    *Orbicella faveolata*
+_Orbicella faveolata_
   Genome resources from the NCBI: https://www.ncbi.nlm.nih.gov/assembly/GCF_002042975.1/
 
 ## RNAseq
-
-    *Pseudodiploria clivosa*
-  Disease reference transcriptome: https://doi.org/10.1007/s00251-015-0854-1
     
-    *Colpophyllia natans*
+_Colpophyllia natans_
   Annotation of de novo transcriptome: https://github.com/z0on/annotatingTranscriptomes

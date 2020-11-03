@@ -8,7 +8,13 @@ The RNAseq section of the jamboree will focus on a coral species that do not hav
 The sequencing reads for this experiment were paired-end, 150-bp reads obtained from the Illumina NovaSeq instrument at the University of Miami Center for Genome Technology core facility.
 
 There are 4 healthy coral samples and 3 disease-infected samples included in this analysis. 
-
+K1
+K2
+K14
+K6
+K8
+K7
+K12
 
 ## Generic roadmap for RNAseq analyses
 
