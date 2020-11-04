@@ -19,6 +19,7 @@ prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
 exp="1"
 samples="K1 K2 K6 K7 K8 K12"
 
+module load trinityrnaseq/r20140717
 #
 Trinity --seqType fq \
 --left K7_1.fastq.gz  --right K7_2.fastq.gz \
