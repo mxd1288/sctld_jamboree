@@ -25,4 +25,5 @@ Trinity --seqType fq \
 --left K7_1.fastq.gz  --right K7_2.fastq.gz \
 --SS_lib_type RF \
 --CPU 6 \
+--JM 20G \
 --output ${prodir}/data/trinity_assembly_out_K7
