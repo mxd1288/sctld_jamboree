@@ -2,3 +2,5 @@
 .Rhistory
 .Rproj.user
 *.Rproj
+rnaseq/outputs/
+tagseq/outputs/

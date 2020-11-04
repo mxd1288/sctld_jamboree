@@ -14,7 +14,53 @@
 #BSUB -N
 
 #specify variable containing sequence file prefixes and directory paths
-mcs="/scratch/projects/transcriptomics/mikeconnelly"
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
-exp="1"
 samples="K1 K2 K6 K7 K8 K12 K13"
+
+module load trimmomatic/0.36
+
+#lets me know which files are being processed
+echo "These are the samples to be processed:"
+echo $samples
+
+#loop to automate generation of scripts to direct sequence file trimming
+for sample in $samples
+do \
+echo "$sample"
+
+#   input BSUB commands
+echo '#!/bin/bash' > "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo '#BSUB -q general' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo '#BSUB -J '"${sample}"_trimmomatic'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo '#BSUB -o '"${prodir}"/outputs/logfiles/"$sample"trim%J.out'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo '#BSUB -e '"${prodir}"/outputs/errorfiles/"$sample"trim%J.err'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+
+#   input command to load modules for trimming
+echo 'module load java/1.8.0_60' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'module load trimmomatic/0.36' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+
+#   input command to unzip raw reads before trimming
+echo 'echo 'Unzipping "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}".txt.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+
+#   input command to trim raw reads
+echo 'echo 'Trimming "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo '/share/opt/java/jdk1.8.0_60/bin/java -jar /share/apps/trimmomatic/0.36/trimmomatic-0.36.jar \
+PE \
+-phred33 \
+-trimlog '"${prodir}"/outputs/logfiles/"${sample}"_trim.log \
+"${prodir}"/data/zippedreads/"${sample}".txt \
+"${prodir}"/outputs/trimmomaticreads/"${sample}"_trimmed.fastq.gz \
+ILLUMINACLIP:"${mcs}"/programs/Trimmomatic-0.36/adapters/TruSeq3-SE.fa:2:30:10 \
+LEADING:3 \
+TRAILING:3 \
+SLIDINGWINDOW:4:15 \
+MINLEN:36 >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'echo '"$sample" trimmed''  >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+
+#   input command to zip raw reads after trimming
+echo 'gzip '"${prodir}"/data/zippedreads/"${sample}".txt  >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+
+#   submit generated trimming script to job queue
+bsub < "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+done

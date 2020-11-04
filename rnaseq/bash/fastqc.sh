@@ -14,12 +14,10 @@
 #BSUB -N
 
 #specify variable containing sequence file prefixes and directory paths
-mcs="/scratch/projects/transcriptomics/mikeconnelly"
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
-exp="1"
 samples="K1 K2 K6 K7 K8 K12 K13"
 
 module load java/1.8.0_60
-${mcs}/programs/FastQC/fastqc \
-${prodir}/data/reads/[K][123456]*.txt.gz \
+module load fastqc/
+fastqc ${prodir}/data/reads/[K][123456]*.txt.gz \
 --outdir ${prodir}/outputs/fastqcs/
