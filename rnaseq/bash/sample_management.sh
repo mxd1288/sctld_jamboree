@@ -55,5 +55,5 @@ echo ${FILE}
 mv "${SAMPLE}" "${FILE}"
 done
 
-# bzipping
-bzip -z *
+# gzipping
+gzip *

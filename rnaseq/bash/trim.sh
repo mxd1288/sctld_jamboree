@@ -41,7 +41,7 @@ echo 'module load trimmomatic/0.36' >> "${prodir}"/bash/jobs/"${sample}"_trimmom
 
 #   input command to unzip raw reads before trimming
 echo 'echo 'Unzipping "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
-echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}".txt.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}".fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
 
 #   input command to trim raw reads
 echo 'echo 'Trimming "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
@@ -51,7 +51,7 @@ PE \
 -trimlog '"${prodir}"/outputs/logfiles/"${sample}"_trim.log \
 "${prodir}"/data/zippedreads/"${sample}".txt \
 "${prodir}"/outputs/trimmomaticreads/"${sample}"_trimmed.fastq.gz \
-ILLUMINACLIP:"${mcs}"/programs/Trimmomatic-0.36/adapters/TruSeq3-SE.fa:2:30:10 \
+ILLUMINACLIP:"${prodir}"/data/adapters/TruSeq3-PE-2.fa:2:30:10 \
 LEADING:3 \
 TRAILING:3 \
 SLIDINGWINDOW:4:15 \
