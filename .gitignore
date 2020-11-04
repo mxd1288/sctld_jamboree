@@ -4,3 +4,4 @@
 *.Rproj
 rnaseq/outputs/
 tagseq/outputs/
+rnaseq/data/
