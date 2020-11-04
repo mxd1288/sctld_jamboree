@@ -65,10 +65,10 @@ Use these additional tutorials to supplement your knowledge of the specific step
 Our pipeline will look like:
 ![*Colpophyllia natans transcriptome assembly and analysis pipeline*](./example_figures/SCTLD_RNAseq_pipeline.png)
 
-### 1. Setup project folders, copy data and program files, ensure filenames are correct, etc.
+### 1.1 Setup project folders, copy data and program files, ensure filenames are correct, etc.
 
 
-### 2. Quality control with FastQC
+### 1.2 Quality control with FastQC
 
 These code chunks are exmamples of how these jobs were submitted on Pegasus, the University of Miami's supercomputer cluster. 
 
@@ -76,7 +76,7 @@ These code chunks are exmamples of how these jobs were submitted on Pegasus, the
 bsub -P 
 ```
 
-### 3. Read trimming with Trimmomatic
+### 1.3 Read trimming with Trimmomatic
 
 ```bash
 bsub -P 
