@@ -22,8 +22,8 @@ samples="K1 K2 K6 K7 K8 K12"
 module load trinityrnaseq/r20140717
 #
 Trinity --seqType fq \
---left K7_1.fastq.gz  --right K7_2.fastq.gz \
+--left ${prodir}/rnaseq/data/reads/K7_1.fastq  --right ${prodir}/rnaseq/data/reads/K7_2.fastq \
 --SS_lib_type RF \
 --CPU 6 \
 --JM 20G \
---output ${prodir}/data/trinity_assembly_out_K7
+--output ${prodir}/outputs/trinity_assembly_out_K7
