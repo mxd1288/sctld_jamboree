@@ -49,8 +49,12 @@ echo '/share/opt/java/jdk1.8.0_60/bin/java -jar /share/apps/trimmomatic/0.36/tri
 PE \
 -phred33 \
 -trimlog '"${prodir}"/outputs/logfiles/"${sample}"_trim.log \
-"${prodir}"/data/zippedreads/"${sample}".txt \
-"${prodir}"/outputs/trimmomaticreads/"${sample}"_trimmed.fastq.gz \
+"${prodir}"/data/zippedreads/"${sample}"_1.fastq \
+"${prodir}"/data/zippedreads/"${sample}"_2.fastq \
+"${prodir}"/outputs/trimmomaticreads/"${sample}"_1_trimmed_paired.fastq.gz \
+"${prodir}"/outputs/trimmomaticreads/"${sample}"_1_trimmed_unpaired.fastq.gz \
+"${prodir}"/outputs/trimmomaticreads/"${sample}"_2_trimmed_paired.fastq.gz \
+"${prodir}"/outputs/trimmomaticreads/"${sample}"_2_trimmed_unpaired.fastq.gz \
 ILLUMINACLIP:"${prodir}"/data/adapters/TruSeq3-PE-2.fa:2:30:10 \
 LEADING:3 \
 TRAILING:3 \
