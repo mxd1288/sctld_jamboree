@@ -17,12 +17,12 @@
 mcs="/scratch/projects/transcriptomics/mikeconnelly"
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
 exp="1"
-samples="K1 K2 K6 K7 K8 K12 K13"
+samples="K1 K2 K6 K7 K8 K12"
 
 #
 Trinity --seqType fq \
---left reads_1.fq \
---right reads_2.fq \
+--samples_file ${prodir}/data/reads/trinity_readfiles.txt \
 --SS_lib_type RF \
 --CPU 6 \
---max_memory 20G
+--max_memory 20G \
+--output ${prodir}/data/trinity_assembly_out

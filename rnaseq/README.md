@@ -41,6 +41,7 @@ Although you will not need to download and install all the following tools to co
     * FastQC (https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
     * Trimmomatic (paper: https://academic.oup.com/bioinformatics/article/30/15/2114/2390096, download: http://www.usadellab.org/cms/?page=trimmomatic)
     * TrimGalore! 
+    * BBTools (https://jgi.doe.gov/data-and-tools/bbtools/)
 
 2. Transcriptome profiling
     * Trinity for RNAseq de novo assembly: (paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3571712/, manual: https://github.com/trinityrnaseq/trinityrnaseq/wiki)
@@ -58,6 +59,7 @@ Use these additional tutorials to supplement your knowledge of the specific step
     * https://hbctraining.github.io/Intro-to-rnaseq-hpc-O2/lessons/03_alignment.html
     
 4. Interpretation
+
 
 ## Specific steps for analyzing SCTLD transcriptomes
 

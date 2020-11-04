@@ -56,4 +56,4 @@ mv "${SAMPLE}" "${FILE}"
 done
 
 # gzipping
-gzip *
+gzip *.fastq

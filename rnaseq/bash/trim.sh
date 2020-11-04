@@ -15,7 +15,7 @@
 
 #specify variable containing sequence file prefixes and directory paths
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
-samples="K1 K2 K6 K7 K8 K12 K13"
+samples="K1 K2 K6 K7 K8 K12"
 
 module load trimmomatic/0.36
 
@@ -55,7 +55,7 @@ PE \
 "${prodir}"/outputs/trimmomaticreads/"${sample}"_1_trimmed_unpaired.fastq.gz \
 "${prodir}"/outputs/trimmomaticreads/"${sample}"_2_trimmed_paired.fastq.gz \
 "${prodir}"/outputs/trimmomaticreads/"${sample}"_2_trimmed_unpaired.fastq.gz \
-ILLUMINACLIP:"${prodir}"/data/adapters/TruSeq3-PE-2.fa:2:30:10 \
+ILLUMINACLIP:"${prodir}"/data/adapters/TruSeq3-PE-2.fa:2:30:10:2:keepBothReads \
 LEADING:3 \
 TRAILING:3 \
 SLIDINGWINDOW:4:15 \

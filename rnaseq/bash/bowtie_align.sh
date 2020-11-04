@@ -15,4 +15,4 @@
 
 #specify variable containing sequence file prefixes and directory paths
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
-samples="K1 K2 K6 K7 K8 K12 K13"
+samples="K1 K2 K6 K7 K8 K12"
