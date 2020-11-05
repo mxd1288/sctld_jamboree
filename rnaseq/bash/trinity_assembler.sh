@@ -5,7 +5,7 @@
 #bsub -P transcriptomics < ./bash/trinity_assembler.sh
 
 #BSUB -J trinity_assembler_cnat
-#BSUB -q general
+#BSUB -q bigmem
 #BSUB -P transcriptomics
 #BSUB -o trinity_assembler_cnat%J.out
 #BSUB -e trinity_assembler_cnat%J.err
