@@ -14,7 +14,7 @@
 #BSUB -N
 
 #specify variable containing sequence file prefixes and directory paths
-prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
+prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq"
 samples="K1 K2 K6 K7 K8 K12 K13"
 
 module load java/1.8.0_60

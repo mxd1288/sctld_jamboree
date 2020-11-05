@@ -15,14 +15,14 @@
 
 #specify variable containing sequence file prefixes and directory paths
 mcs="/scratch/projects/transcriptomics/mikeconnelly"
-prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
+prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq"
 exp="1"
 samples="K1 K2 K6 K7 K8 K12"
 
 module load trinityrnaseq/r20140717
 #
 Trinity --seqType fq \
---left ${prodir}/rnaseq/data/reads/K7_1.fastq  --right ${prodir}/rnaseq/data/reads/K7_2.fastq \
+--left ${prodir}/data/reads/K7_1.fastq  --right ${prodir}/data/reads/K7_2.fastq \
 --SS_lib_type RF \
 --CPU 6 \
 --JM 20G \
