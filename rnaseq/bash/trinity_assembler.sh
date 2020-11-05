@@ -23,7 +23,6 @@ Trinity --seqType fq \
 --right ${prodir}/outputs/trimmomaticreads/K1_1_trimmed_paired.fastq.gz, ${prodir}/outputs/trimmomaticreads/K2_1_trimmed_paired.fastq.gz \
 --SS_lib_type RF \
 --CPU 6 \
---verbose \
 --normalize_reads \
 --JM 100G \
 --output ${prodir}/outputs/trinity_assembly_out
