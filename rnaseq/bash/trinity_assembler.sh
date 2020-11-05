@@ -19,7 +19,7 @@ samples="K1 K2 K6 K7 K8 K12"
 
 #
 Trinity --seqType fq \
---samples_file ${prodir}/data/reads/trinity_readfiles.txt \
+--samples_file ${prodir}/data/trinity_readfiles.txt \
 --SS_lib_type RF \
 --CPU 6 \
 --verbose \
