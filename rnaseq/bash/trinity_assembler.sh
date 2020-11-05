@@ -17,11 +17,11 @@
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq"
 samples="K1 K2 K6 K7 K8 K12"
 
-module load trinityrnaseq/r20140717 
+module load trinityrnaseq/r20140717
 #
 Trinity --seqType fq \
---left ${prodir}/outputs/trimmomaticreads/K1_2_trimmed_paired.fastq.gz \
---right ${prodir}/outputs/trimmomaticreads/K1_1_trimmed_paired.fastq.gz \
+--left ${prodir}/outputs/trimmomaticreads/K1_2_trimmed_paired.fastq.gz ${prodir}/outputs/trimmomaticreads/K2_2_trimmed_paired.fastq.gz  \
+--right ${prodir}/outputs/trimmomaticreads/K1_1_trimmed_paired.fastq.gz ${prodir}/outputs/trimmomaticreads/K2_2_trimmed_paired.fastq.gz \
 --SS_lib_type RF \
 --CPU 6 \
 --normalize_reads \
