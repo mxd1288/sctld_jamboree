@@ -41,7 +41,8 @@ echo 'module load trimmomatic/0.36' >> "${prodir}"/bash/jobs/"${sample}"_trimmom
 
 #   input command to unzip raw reads before trimming
 echo 'echo 'Unzipping "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
-echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}".fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}"_1.fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}"_2.fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
 
 #   input command to trim raw reads
 echo 'echo 'Trimming "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
@@ -63,7 +64,8 @@ MINLEN:36 >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
 echo 'echo '"$sample" trimmed''  >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
 
 #   input command to zip raw reads after trimming
-echo 'gzip '"${prodir}"/data/zippedreads/"${sample}".txt  >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gzip '"${prodir}"/data/zippedreads/"${sample}"_1.fastq  >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gzip '"${prodir}"/data/zippedreads/"${sample}"_2.fastq  >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
 
 #   submit generated trimming script to job queue
 bsub < "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
