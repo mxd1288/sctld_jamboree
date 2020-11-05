@@ -8,6 +8,19 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+```{r packages}
+# install.packages("tidyverse", "DESeq2", "pheatmap")
+library("tidyverse")
+library("here")
+library("DESeq2")
+library("pheatmap")
+library("ComplexHeatmap")
+```
+
+```{r import data}
+samples <- read_csv(here("data", "metadata.csv"))
+```
+
 ```{r}
 
 ```

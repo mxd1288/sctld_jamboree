@@ -14,9 +14,7 @@
 #BSUB -N
 
 #specify variable containing sequence file prefixes and directory paths
-mcs="/scratch/projects/transcriptomics/mikeconnelly"
-prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
-exp="1"
+prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq"
 samples="K1 K2 K6 K7 K8 K12"
 
 #
@@ -24,5 +22,7 @@ Trinity --seqType fq \
 --samples_file ${prodir}/data/reads/trinity_readfiles.txt \
 --SS_lib_type RF \
 --CPU 6 \
---max_memory 20G \
---output ${prodir}/data/trinity_assembly_out
+--verbose \
+--normalize_reads \
+--JM 100G \
+--output ${prodir}/outputs/trinity_assembly_out
