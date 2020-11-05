@@ -41,8 +41,8 @@ echo 'module load trimmomatic/0.36' >> "${prodir}"/bash/jobs/"${sample}"_trimmom
 
 #   input command to unzip raw reads before trimming
 echo 'echo 'Unzipping "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
-echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}"_1.fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
-echo 'gunzip '"${prodir}"/data/zippedreads/"${sample}"_2.fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gunzip '"${prodir}"/data/reads/"${sample}"_1.fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
+echo 'gunzip '"${prodir}"/data/reads/"${sample}"_2.fastq.gz >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
 
 #   input command to trim raw reads
 echo 'echo 'Trimming "${sample}"'' >> "${prodir}"/bash/jobs/"${sample}"_trimmomatic.job
@@ -50,8 +50,8 @@ echo '/share/opt/java/jdk1.8.0_60/bin/java -jar /share/apps/trimmomatic/0.36/tri
 PE \
 -phred33 \
 -trimlog '"${prodir}"/outputs/logfiles/"${sample}"_trim.log \
-"${prodir}"/data/zippedreads/"${sample}"_1.fastq \
-"${prodir}"/data/zippedreads/"${sample}"_2.fastq \
+"${prodir}"/data/reads/"${sample}"_1.fastq \
+"${prodir}"/data/reads/"${sample}"_2.fastq \
 "${prodir}"/outputs/trimmomaticreads/"${sample}"_1_trimmed_paired.fastq.gz \
 "${prodir}"/outputs/trimmomaticreads/"${sample}"_1_trimmed_unpaired.fastq.gz \
 "${prodir}"/outputs/trimmomaticreads/"${sample}"_2_trimmed_paired.fastq.gz \
