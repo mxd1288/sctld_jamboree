@@ -238,13 +238,13 @@ cd path/to/rawread/folder
 PALMATA=`ls | cut -f 1 -d '.'`
 
 # for loop to run through files recursively 
-# the \ allows you to seperate by line, otherwise this would all be on one line and is ugly as
+# the \ allows you to separate by line, otherwise this would all be on one line and is ugly as
 for PALPAL in $PALMATA
 do
 bbduk.sh \
 -Xmx200m \
-in=/scratch/projects/transcriptomics/ben_young/POR/tagseq/raw_reads/all_raw/'"${PALPAL}"'.fastq \
-out=/scratch/projects/transcriptomics/ben_young/POR/tagseq/host/trimmed_reads/'"${PALPAL}"'_tr.fastq \
+in=path/to/rawread.fastq \
+out=path/to/trim/folder/trimmed.fastq \
 ref=/nethome/bdy8/programs/bbmap/resources/polyA.fa.gz,/nethome/bdy8/programs/bbmap/resources/truseq_rna.fa.gz \
 k=13 \
 ktrim=r \
@@ -268,12 +268,36 @@ We first need to generate a genome index for STAR to align our trimmed reads aga
 
 *Orbicella faveolata*
 ```bash
+# generating a gff file with no tRNA in it, these can cause problems downstream
+awk '$3 != "tRNA" {print $0}' < \
+/nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_genomic.gff > \
+/nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_notrna_genomic.gff
 
+/nethome/bdy8/programs/STAR \
+--runThreadN 8 \
+--runMode genomeGenerate \
+--genomeDir /nethome/bdy8/ofav_genome/ \
+--genomeFastaFiles /nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_genomic.fna \
+--sjdbGTFfile /nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_notrna_genomic.gff \
+--sjdbOverhang 100 \
+--sjdbGTFtagExonParentTranscript Parent
 ```
 
 *Montastrea cavernosa*
 ```bash
+# generating a gff file with no tRNA in it, these can cause problems downstream
+awk '$3 != "tRNA" {print $0}' < \
+/nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.gff3 > \
+/nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.notrna.gff3
 
+/nethome/bdy8/programs/STAR \
+--runThreadN 8 \
+--runMode genomeGenerate \
+--genomeDir /nethome/bdy8/mcav_genome/Mcavernosa_annotation/ \
+--genomeFastaFiles /nethome/bdy8/mcav_genome/Mcavernosa_July2018.fasta \
+--sjdbGTFfile /nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.notrna.gff3 \
+--sjdbOverhang 100 \
+--sjdbGTFtagExonParentTranscript Parent
 ```
   
 
@@ -285,12 +309,48 @@ This is also memory intensive and so should be run on a superocmputer or cluster
 
 *Orbicella faveolata*
 ```bash
-
+/nethome/bdy8/programs/STAR \
+--runThreadN 8 \
+--genomeDir path/to/genome/index/ \
+--readFilesIn path/to/trimmed/reads \
+--outFilterType BySJout \
+--outFilterMultimapNmax 20 \
+--outFilterMismatchNoverLmax 0.1 \
+--alignIntronMin 20 \
+--alignIntronMax 1000000 \
+--alignMatesGapMax 1000000 \
+--outSAMtype BAM SortedByCoordinate \
+--quantMode TranscriptomeSAM GeneCounts \
+--outSAMstrandField intronMotif \
+--twopassMode Basic \
+--outFilterScoreMinOverLread 0.2 \
+--outFilterMatchNminOverLread 0.2 \
+--twopass1readsN -1 \
+--outReadsUnmapped Fastx \
+--outFileNamePrefix path/to/output/folder/ #need a folder for each sample 
 ```  
 
 *Montastrea cavernosa*
 ```bash
-
+/nethome/bdy8/programs/STAR \
+--runThreadN 8 \
+--genomeDir path/to/genome/index/ \
+--readFilesIn path/to/trimmed/reads \
+--outFilterType BySJout \
+--outFilterMultimapNmax 20 \
+--outFilterMismatchNoverLmax 0.1 \
+--alignIntronMin 20 \
+--alignIntronMax 1000000 \
+--alignMatesGapMax 1000000 \
+--outSAMtype BAM SortedByCoordinate \
+--quantMode TranscriptomeSAM GeneCounts \
+--outSAMstrandField intronMotif \
+--twopassMode Basic \
+--outFilterScoreMinOverLread 0.2 \
+--outFilterMatchNminOverLread 0.2 \
+--twopass1readsN -1 \
+--outReadsUnmapped Fastx \
+--outFileNamePrefix path/to/output/folder/ #need a folder for each sample
 ```  
   
 ### 5. Quantification with Salmon  
