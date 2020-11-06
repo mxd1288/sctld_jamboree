@@ -266,37 +266,20 @@ This requires two steps
 
 We first need to generate a genome index for STAR to align our trimmed reads against. This requires **ALOT** of RAM so this should be done on the supercomputer (I use Pegasus for mine). 
 
-*Orbicella faveolata*
 ```bash
 # generating a gff file with no tRNA in it, these can cause problems downstream
 awk '$3 != "tRNA" {print $0}' < \
-/nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_genomic.gff > \
-/nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_notrna_genomic.gff
+path/to/genome.gff3 > \
+genome_gff3_notrna.gff3
 
+# general genome generate parameters used for Ofav and Mcav
 STAR \
 --runThreadN 8 \
 --runMode genomeGenerate \
 --genomeDir /nethome/bdy8/ofav_genome/ \
---genomeFastaFiles /nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_genomic.fna \
---sjdbGTFfile /nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_notrna_genomic.gff \
---sjdbOverhang 100 \
---sjdbGTFtagExonParentTranscript Parent
-```
-
-*Montastrea cavernosa*
-```bash
-# generating a gff file with no tRNA in it, these can cause problems downstream
-awk '$3 != "tRNA" {print $0}' < \
-/nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.gff3 > \
-/nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.notrna.gff3
-
-STAR \
---runThreadN 8 \
---runMode genomeGenerate \
---genomeDir /nethome/bdy8/mcav_genome/Mcavernosa_annotation/ \
---genomeFastaFiles /nethome/bdy8/mcav_genome/Mcavernosa_July2018.fasta \
---sjdbGTFfile /nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.notrna.gff3 \
---sjdbOverhang 100 \
+--genomeFastaFiles path/to/genome.fasta \
+--sjdbGTFfile path/to/genome.gff3 \
+--sjdbOverhang 100 \ 
 --sjdbGTFtagExonParentTranscript Parent
 ```
   
@@ -309,8 +292,9 @@ This is also memory intensive and so should be run on a superocmputer or cluster
 
 An important flag is `--outSAMtpe`, this ouputs a unsorted BAM file which we need to use for the quantificatio step in salmon. 
 
-*Orbicella faveolata*
+
 ```bash
+# parameters for Ofav and Mcav alignment
 STAR \
 --runThreadN 8 \
 --genomeDir path/to/genome/index/ \
@@ -332,28 +316,6 @@ STAR \
 --outFileNamePrefix path/to/output/folder/ #need a folder for each sample 
 ```  
 
-*Montastrea cavernosa*
-```bash
-STAR \
---runThreadN 8 \
---genomeDir path/to/genome/index/ \
---readFilesIn path/to/trimmed/reads \
---outFilterType BySJout \
---outFilterMultimapNmax 20 \
---outFilterMismatchNoverLmax 0.1 \
---alignIntronMin 20 \
---alignIntronMax 1000000 \
---alignMatesGapMax 1000000 \
---outSAMtype BAM SortedByCoordinate \ 
---quantMode TranscriptomeSAM GeneCounts \
---outSAMstrandField intronMotif \
---twopassMode Basic \
---outFilterScoreMinOverLread 0.2 \
---outFilterMatchNminOverLread 0.2 \
---twopass1readsN -1 \
---outReadsUnmapped Fastx \
---outFileNamePrefix path/to/output/folder/ #need a folder for each sample
-```  
   
 ### 5. Quantification with Salmon  
 
@@ -364,13 +326,14 @@ THE `-l` flag is SUPER IMPORTANT. You need to pay attention to this parameter an
 
 * Lexogen Quantseq FWD and single reads - SF
 
-*Orbicella faveolata*
 ```bash
+# as we use genome fasta we need to generate a transcriptome for salmon to use
 gffread \
 -w made_gffread.fasta  \
 -g fasta_used_in_genomegenerate_STAR.fasta \
 gff_used_in_genomegenerate_STAR.gff3
 
+# general quant job used for Mcav and Ofav
 salmon \
 quant \
 -t made_gffread.fasta \
@@ -381,25 +344,6 @@ quant \
 -a path/to/aligned.bam \
 -o path/to/output/folder
 ```  
-
-*Montastrea cavernosa*
-```bash
-gffread \
--w made_gffread.fasta  \
--g fasta_used_in_genomegenerate_STAR.fasta \
-gff_used_in_genomegenerate_STAR.gff3
-
-/nethome/bdy8/programs/salmon-0.10.0_linux_x86_64/bin/salmon \
-quant \
--t made_gffread.fasta \
--l SF \
---fldMean 320 \
---gcBias \
---seqBias \
--a path/to/aligned.bam \
--o path/to/output/folder
-```  
-
   
 ### 6. Differential Expression Analysis  
 
