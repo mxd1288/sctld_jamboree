@@ -273,7 +273,7 @@ awk '$3 != "tRNA" {print $0}' < \
 /nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_genomic.gff > \
 /nethome/bdy8/ofav_genome/GCF_002042975.1_ofav_dov_v1_notrna_genomic.gff
 
-/nethome/bdy8/programs/STAR \
+STAR \
 --runThreadN 8 \
 --runMode genomeGenerate \
 --genomeDir /nethome/bdy8/ofav_genome/ \
@@ -290,7 +290,7 @@ awk '$3 != "tRNA" {print $0}' < \
 /nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.gff3 > \
 /nethome/bdy8/mcav_genome/Mcavernosa_annotation/Mcavernosa.maker.coding.notrna.gff3
 
-/nethome/bdy8/programs/STAR \
+STAR \
 --runThreadN 8 \
 --runMode genomeGenerate \
 --genomeDir /nethome/bdy8/mcav_genome/Mcavernosa_annotation/ \
@@ -305,11 +305,13 @@ awk '$3 != "tRNA" {print $0}' < \
 
 We now use our generated genome index for alignment to our raw trimmed reads.  
 
-This is also memory intensive and so should be run on a superocmputer or cluster. Again, we are using the redcomended parameters from the lexogen data analysis page (https://www.lexogen.com/quantseq-data-analysis/)
+This is also memory intensive and so should be run on a superocmputer or cluster. Again, we are using the recommended parameters from the lexogen data analysis page (https://www.lexogen.com/quantseq-data-analysis/)  
+
+An important flag is `--outSAMtpe`, this ouputs a unsorted BAM file which we need to use for the quantificatio step in salmon. 
 
 *Orbicella faveolata*
 ```bash
-/nethome/bdy8/programs/STAR \
+STAR \
 --runThreadN 8 \
 --genomeDir path/to/genome/index/ \
 --readFilesIn path/to/trimmed/reads \
@@ -332,7 +334,7 @@ This is also memory intensive and so should be run on a superocmputer or cluster
 
 *Montastrea cavernosa*
 ```bash
-/nethome/bdy8/programs/STAR \
+STAR \
 --runThreadN 8 \
 --genomeDir path/to/genome/index/ \
 --readFilesIn path/to/trimmed/reads \
@@ -342,7 +344,7 @@ This is also memory intensive and so should be run on a superocmputer or cluster
 --alignIntronMin 20 \
 --alignIntronMax 1000000 \
 --alignMatesGapMax 1000000 \
---outSAMtype BAM SortedByCoordinate \
+--outSAMtype BAM SortedByCoordinate \ 
 --quantMode TranscriptomeSAM GeneCounts \
 --outSAMstrandField intronMotif \
 --twopassMode Basic \
@@ -355,16 +357,47 @@ This is also memory intensive and so should be run on a superocmputer or cluster
   
 ### 5. Quantification with Salmon  
 
-Now we have our aligned reads we need to quantify them in a way so that we can import them into R and Rstudio for subsequent analysis. Salmon does these 'wicked fast' and generates a quant.sf for each sample that has the counts for each gene in it. 
+Now we have our aligned reads we need to quantify them in a way so that we can import them into R and Rstudio for subsequent analysis. Salmon does these 'wicked fast' and generates a quant.sf for each sample that has the counts for each gene in it.  
+
+THE `-l` flag is SUPER IMPORTANT. You need to pay attention to this parameter and the library prep we used. For example, if we used  
+* Illumina TruStrand and did single reads - SR  
+
+* Lexogen Quantseq FWD and single reads - SF
 
 *Orbicella faveolata*
 ```bash
+gffread \
+-w made_gffread.fasta  \
+-g fasta_used_in_genomegenerate_STAR.fasta \
+gff_used_in_genomegenerate_STAR.gff3
 
+salmon \
+quant \
+-t made_gffread.fasta \
+-l SF \
+--fldMean 320 \
+--gcBias \
+--seqBias \
+-a path/to/aligned.bam \
+-o path/to/output/folder
 ```  
 
 *Montastrea cavernosa*
 ```bash
+gffread \
+-w made_gffread.fasta  \
+-g fasta_used_in_genomegenerate_STAR.fasta \
+gff_used_in_genomegenerate_STAR.gff3
 
+/nethome/bdy8/programs/salmon-0.10.0_linux_x86_64/bin/salmon \
+quant \
+-t made_gffread.fasta \
+-l SF \
+--fldMean 320 \
+--gcBias \
+--seqBias \
+-a path/to/aligned.bam \
+-o path/to/output/folder
 ```  
 
   
