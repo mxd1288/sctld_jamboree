@@ -14,10 +14,10 @@
 #BSUB -N
 
 #specify variable containing sequence file prefixes and directory paths
-mcs="/scratch/projects/transcriptomics/mikeconnelly/"
+mcs="/scratch/projects/transcriptomics/mikeconnelly"
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq"
 samples="K1 K2 K6 K7 K8 K12 K13"
 
 ${mcs}/programs/salmon-latest_linux_x86_64/bin/salmon \
 index -t ${prodir}/data/refs/Pstrigosa_assembly.fasta \
--i /data/refs/Pstrigosa_salmon_index
+-i ${prodir}/data/refs/Pstrigosa_salmon_index
