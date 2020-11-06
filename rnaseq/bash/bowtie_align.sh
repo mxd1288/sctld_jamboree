@@ -14,5 +14,13 @@
 #BSUB -N
 
 #specify variable containing sequence file prefixes and directory paths
-prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree"
-samples="K1 K2 K6 K7 K8 K12"
+prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq"
+samples="K1 K2 K6 K7 K8 K12 K13"
+
+module load
+
+bowtie2 -x <bt2-idx> \
+-1 <m1> \
+-2 <m2> \
+-q --phred-33
+-S [<sam>]
