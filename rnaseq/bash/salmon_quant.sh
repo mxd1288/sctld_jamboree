@@ -14,5 +14,17 @@
 #BSUB -N
 
 #specify variable containing sequence file prefixes and directory paths
+mcs="/scratch/projects/transcriptomics/mikeconnelly"
 prodir="/scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq"
 samples="K1 K2 K6 K7 K8 K12 K13"
+
+for samp in $samples;
+do
+echo "Processing sample ${samp}"
+${mcs}/programs/salmon-latest_linux_x86_64/bin/salmon \
+          quant -i ${prodir}/data/refs/Pstrigosa_salmon_index\
+         -l A \
+         -1 ${prodir}/outputs/trimmomaticreads/${samp}_1_trimmed_paired.fastq.gz \
+         -2 ${prodir}/outputs/trimmomaticreads/${samp}_2_trimmed_paired.fastq.gz \
+         -p 8 --validateMappings -o ${prodir}/outputs/salmon_quants/${samp}_quant
+done
