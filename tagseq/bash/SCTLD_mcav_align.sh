@@ -42,8 +42,8 @@ echo '/nethome/bdy8/programs/STAR \
 --quantMode TranscriptomeSAM GeneCounts \
 --outSAMstrandField intronMotif \
 --twopassMode Basic \
---outFilterScoreMinOverLread 0.5 \
---outFilterMatchNminOverLread 0.5 \
+--outFilterScoreMinOverLread 0.2 \
+--outFilterMatchNminOverLread 0.2 \
 --twopass1readsN -1 \
 --outReadsUnmapped Fastx \
 --outFileNamePrefix /scratch/projects/transcriptomics/ben_young/SCTLD/host/mcav_align/'"$PALPAL"'/'"$PALPAL"'_' >> /scratch/projects/transcriptomics/ben_young/SCTLD/host/loop_scripts/mcav_align/"$PALPAL"_h_align.sh

@@ -43,8 +43,8 @@ echo '/nethome/bdy8/programs/STAR \
 --outSAMstrandField intronMotif \
 --twopassMode Basic \
 --twopass1readsN -1 \
---outFilterScoreMinOverLread 0.5 \
---outFilterMatchNminOverLread 0.5 \
+--outFilterScoreMinOverLread 0.2 \
+--outFilterMatchNminOverLread 0.2 \
 --outReadsUnmapped Fastx \
 --outFileNamePrefix /scratch/projects/transcriptomics/ben_young/SCTLD/host/ofav_align/'"$PALPAL"'/'"$PALPAL"'_' >> /scratch/projects/transcriptomics/ben_young/SCTLD/host/loop_scripts/ofav_align/"$PALPAL"_h_align.sh
 bsub < /scratch/projects/transcriptomics/ben_young/SCTLD/host/loop_scripts/ofav_align/"$PALPAL"_h_align.sh
