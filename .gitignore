@@ -5,3 +5,4 @@
 rnaseq/outputs/
 tagseq/outputs/
 rnaseq/data/reads
+rnaseq/data/refs/Psst_c2.ensamblaje.fas

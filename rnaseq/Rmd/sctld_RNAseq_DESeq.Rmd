@@ -13,15 +13,45 @@ knitr::opts_chunk$set(echo = TRUE)
 library("tidyverse")
 library("here")
 library("DESeq2")
-library("pheatmap")
-library("ComplexHeatmap")
 ```
 
-```{r import data}
+```{r import_data}
 samples <- read_csv(here("data", "metadata.csv"))
 ```
 
-```{r}
+```{r import_counts}
+
+```
+
+```{r create_DESeq_dataset}
+
+```
+
+```{r DESeq_analysis}
+
+```
+
+```{r DESeq_contrasts}
+
+```
+
+
+## DESeq results visualizations
+
+```{r DESeq_built-in_functions}
+
+```
+```{r pca}
+
+```
+
+```{r volcano_plot}
+
+```
+
+```{r heatmaps}
+library("pheatmap")
+library("ComplexHeatmap")
 
 ```
 
