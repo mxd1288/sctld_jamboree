@@ -238,13 +238,13 @@ cd path/to/rawread/folder
 PALMATA=`ls | cut -f 1 -d '.'`
 
 # for loop to run through files recursively 
-# the \ allows you to seperate by line, otherwise this would all be on one line and is ugly as
+# the \ allows you to separate by line, otherwise this would all be on one line and is ugly as
 for PALPAL in $PALMATA
 do
 bbduk.sh \
 -Xmx200m \
-in=/scratch/projects/transcriptomics/ben_young/POR/tagseq/raw_reads/all_raw/'"${PALPAL}"'.fastq \
-out=/scratch/projects/transcriptomics/ben_young/POR/tagseq/host/trimmed_reads/'"${PALPAL}"'_tr.fastq \
+in=path/to/rawread.fastq \
+out=path/to/trim/folder/trimmed.fastq \
 ref=/nethome/bdy8/programs/bbmap/resources/polyA.fa.gz,/nethome/bdy8/programs/bbmap/resources/truseq_rna.fa.gz \
 k=13 \
 ktrim=r \
@@ -266,14 +266,21 @@ This requires two steps
 
 We first need to generate a genome index for STAR to align our trimmed reads against. This requires **ALOT** of RAM so this should be done on the supercomputer (I use Pegasus for mine). 
 
-*Orbicella faveolata*
 ```bash
+# generating a gff file with no tRNA in it, these can cause problems downstream
+awk '$3 != "tRNA" {print $0}' < \
+path/to/genome.gff3 > \
+genome_gff3_notrna.gff3
 
-```
-
-*Montastrea cavernosa*
-```bash
-
+# general genome generate parameters used for Ofav and Mcav
+STAR \
+--runThreadN 8 \
+--runMode genomeGenerate \
+--genomeDir /nethome/bdy8/ofav_genome/ \
+--genomeFastaFiles path/to/genome.fasta \
+--sjdbGTFfile path/to/genome.gff3 \
+--sjdbOverhang 100 \ 
+--sjdbGTFtagExonParentTranscript Parent
 ```
   
 
@@ -281,32 +288,62 @@ We first need to generate a genome index for STAR to align our trimmed reads aga
 
 We now use our generated genome index for alignment to our raw trimmed reads.  
 
-This is also memory intensive and so should be run on a superocmputer or cluster. Again, we are using the redcomended parameters from the lexogen data analysis page (https://www.lexogen.com/quantseq-data-analysis/)
+This is also memory intensive and so should be run on a superocmputer or cluster. Again, we are using the recommended parameters from the lexogen data analysis page (https://www.lexogen.com/quantseq-data-analysis/)  
 
-*Orbicella faveolata*
+An important flag is `--outSAMtpe`, this ouputs a unsorted BAM file which we need to use for the quantificatio step in salmon. 
+
+
 ```bash
-
+# parameters for Ofav and Mcav alignment
+STAR \
+--runThreadN 8 \
+--genomeDir path/to/genome/index/ \
+--readFilesIn path/to/trimmed/reads \
+--outFilterType BySJout \
+--outFilterMultimapNmax 20 \
+--outFilterMismatchNoverLmax 0.1 \
+--alignIntronMin 20 \
+--alignIntronMax 1000000 \
+--alignMatesGapMax 1000000 \
+--outSAMtype BAM SortedByCoordinate \
+--quantMode TranscriptomeSAM GeneCounts \
+--outSAMstrandField intronMotif \
+--twopassMode Basic \
+--outFilterScoreMinOverLread 0.2 \
+--outFilterMatchNminOverLread 0.2 \
+--twopass1readsN -1 \
+--outReadsUnmapped Fastx \
+--outFileNamePrefix path/to/output/folder/ #need a folder for each sample 
 ```  
 
-*Montastrea cavernosa*
-```bash
-
-```  
   
 ### 5. Quantification with Salmon  
 
-Now we have our aligned reads we need to quantify them in a way so that we can import them into R and Rstudio for subsequent analysis. Salmon does these 'wicked fast' and generates a quant.sf for each sample that has the counts for each gene in it. 
+Now we have our aligned reads we need to quantify them in a way so that we can import them into R and Rstudio for subsequent analysis. Salmon does these 'wicked fast' and generates a quant.sf for each sample that has the counts for each gene in it.  
 
-*Orbicella faveolata*
+THE `-l` flag is SUPER IMPORTANT. You need to pay attention to this parameter and the library prep we used. For example, if we used  
+* Illumina TruStrand and did single reads - SR  
+
+* Lexogen Quantseq FWD and single reads - SF
+
 ```bash
+# as we use genome fasta we need to generate a transcriptome for salmon to use
+gffread \
+-w made_gffread.fasta  \
+-g fasta_used_in_genomegenerate_STAR.fasta \
+gff_used_in_genomegenerate_STAR.gff3
 
+# general quant job used for Mcav and Ofav
+salmon \
+quant \
+-t made_gffread.fasta \
+-l SF \
+--fldMean 320 \
+--gcBias \
+--seqBias \
+-a path/to/aligned.bam \
+-o path/to/output/folder
 ```  
-
-*Montastrea cavernosa*
-```bash
-
-```  
-
   
 ### 6. Differential Expression Analysis  
 
