@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # install.packages("tidyverse", "DESeq2", "pheatmap")
 library("tidyverse")
 library("here")
+library("tximport")
 library("DESeq2")
 ```
 
@@ -19,12 +20,26 @@ library("DESeq2")
 samples <- read_csv(here("data", "metadata.csv"))
 ```
 
-```{r import_counts}
-
+```{r tximport}
+quant_files <- list.files(here("outputs", "salmon_quants"))
+txi <- tximport(files, type="salmon")
+```
+```{r transcript_annotation}
+gene_annotation <- read.delim(file = "./data/psst_annotations.tsv", header = T) %>% arrange(ID)
+rownames(gene_annotation) <- gene_annotation$ID
+# Check gene feature annotation and countdata rowname order coherence
+all(rownames(countdata.sorted) == gene_annotation$ID)
+all(rownames(countdata.sorted) ==  rownames(gene_annotation))
+# Obtain KOG annotations for P. damicornis genome
+gene2kog <- gene_annotation %>%
+  dplyr::select(ID, KOG_Class) %>% 
+  filter(KOG_Class != "")
 ```
 
 ```{r create_DESeq_dataset}
-
+ddsTxi <- DESeqDataSetFromTximport(txi,
+                                   colData = samples,
+                                   design = ~ Treatment)
 ```
 
 ```{r DESeq_analysis}
