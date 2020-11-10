@@ -2,7 +2,7 @@
 #./bash//Pstrigosa_annotate/pstrigosa_transdecoder_longorfs.sh
 #purpose: Use Transdecoder to extract long ORFs (> 100aa) from a transcriptome
 #To start this job from the sctld_jamboree/rnaseq directory, use:
-#bsub -P transcriptomics < ./bash/Pstrigosa_annotate/pstrigosa_transdecoder_longorfs.sh
+#bsub -P transcriptomics < ./bash/Pstrigosa_transdecoder/pstrigosa_transdecoder_longorfs.sh
 
 #BSUB -J pstrigosa_transdecoder_longorfs
 #BSUB -q general

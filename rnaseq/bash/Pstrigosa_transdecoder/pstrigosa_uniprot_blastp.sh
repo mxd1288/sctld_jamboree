@@ -2,7 +2,7 @@
 #./bash//Pstrigosa_annotate/pstrigosa_uniprot_blastp.sh
 #purpose: BLAST search against the Uniprot protein database to annotate transcriptome in Transdecoder
 #To start this job from the sctld_jamboree/rnaseq directory, use:
-#bsub -P transcriptomics < ./bash/Pstrigosa_annotate/pstrigosa_uniprot_blastp.sh
+#bsub -P transcriptomics < ./bash/Pstrigosa_transdecoder/pstrigosa_uniprot_blastp.sh
 
 #BSUB -J pstrigosa_uniprot_blastp
 #BSUB -q general

@@ -40,7 +40,6 @@ Although you will not need to download and install all the following tools to co
 1. Read quality control
     * FastQC (https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
     * Trimmomatic (paper: https://academic.oup.com/bioinformatics/article/30/15/2114/2390096, download: http://www.usadellab.org/cms/?page=trimmomatic)
-    * TrimGalore! 
     * BBTools (https://jgi.doe.gov/data-and-tools/bbtools/)
 
 2. Transcriptome profiling
@@ -102,11 +101,13 @@ bsub -P
 ### 2.3 Transcript quantification with Salmon
 
 ```bash
-bsub -P 
+bsub -P transcriptomics < ./bash/salmon_quant.sh
 ```
 
+## Switch to R and RStudio
+statistical analysis of quantified transcript counts
 ### 3.1 Import transcript counts into R with tximport
-
+ 
 ```r
 library("tximport")
 ```

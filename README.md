@@ -19,5 +19,12 @@ _Orbicella faveolata_
 
 ## RNAseq
     
+_Pseudodiploria clivosa_
+  Paper on immunotranscriptome of _P. strigosa_: 
+
 _Colpophyllia natans_
+  De novo transcriptome assembly: https://github.com/trinityrnaseq/trinityrnaseq/wiki
   Annotation of de novo transcriptome: https://github.com/z0on/annotatingTranscriptomes
+  TransDecoder software guide: https://github.com/TransDecoder/TransDecoder/wiki
+  Trinotate pipeline: https://github.com/Trinotate
+  egg-NOG-mapper: http://eggnog-mapper.embl.de/
