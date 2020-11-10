@@ -6,5 +6,8 @@ rnaseq/outputs/
 tagseq/outputs/
 rnaseq/data/reads
 rnaseq/data/refs/Psst_c2.ensamblaje.fas
+rnaseq/data/refs/Pstrigosa_assembly.fasta
 rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.gff3
 rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.pep
+rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.bed
+rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.cds
