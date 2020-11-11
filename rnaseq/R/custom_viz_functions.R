@@ -31,6 +31,30 @@ plotPCA.custom <-  function(object, intgroup="Treatment", ntop=500, returnData=F
   # extract loadings
 }
 
+### PCA plot formatted with aesthetics ---------------------------------------------------------------------------
+ggPCA <- function(vsd, samples, condcolors, ntop = 500,  pclab = c(1,2)) {
+  
+  PCAtmtdata <- plotPCA.custom(vsd, intgroup = c("Treatment"), ntop = 500, returnData = TRUE,  pcs = c(pclab[1],pclab[2]))
+  #set factor orders 
+  # PCAtmtdata$Colony <- factor(PCAtmtdata$Colony, levels = c("HW1", "HW2", "WT1", "WT2"), ordered = TRUE)
+  PCAtmtdata$Treatment <- factor(PCAtmtdata$Treatment, levels = c("Control", "Experimental"), ordered = TRUE)
+  
+  PCAtmtpercentVar <- round(100* attr(PCAtmtdata, "percentVar"))
+  
+  PCAplot <-  PCAtmtdata %>% ggplot(aes(PC1,PC2)) +
+    geom_point(size=4, aes(color = Treatment), stroke = 0.5, show.legend = TRUE) +
+    xlab(paste0( "PC", pclab[1], ": ", PCAtmtpercentVar[pclab[1]], "% variance")) + 
+    ylab(paste0( "PC", pclab[2], ": ", PCAtmtpercentVar[pclab[2]], "% variance")) + 
+    coord_fixed(1) + 
+    scale_color_manual(values=c("blue", "red"), name="Treatment") +
+    # scale_shape_manual(values=colshapes, name="Colony") +
+    theme(legend.position = "right") +
+    # guides(fill = guide_legend(override.aes = list(fill = condcolors, shape = 21, alpha = 1, stroke = 0.5))) +
+    ggtitle("Principal Component Analysis")
+  
+  PCAplot
+}
+
 ### Volcano plot for differential gene expression -----------------------------------------------------------------
 volcanoplot <- function(res) {
   
