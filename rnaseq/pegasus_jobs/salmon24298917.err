@@ -1,0 +1,1011 @@
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K19_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K19_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K19_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K19_quant/logs
+[2020-11-10 20:45:20.270] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:45:20.270] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:45:20.270] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:45:20.270] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:45:20.270] [jointLog] [info] parsing read library format
+[2020-11-10 20:45:20.270] [jointLog] [info] There is 1 library.
+[2020-11-10 20:45:20.314] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:45:20.319] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 130.2 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 11.399 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 7.7839 ms
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 119.52 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 212.38 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 97.392 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 250.47 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 101.02 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 8.2531 ms
+-----------------------------------------
+
+
+
+
+[2020-11-10 20:45:21.273] [jointLog] [info] done
+[2020-11-10 20:45:21.273] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:45:21.352] [jointLog] [info] Number of decoys : 0
+[2020-11-10 20:45:22.562] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 562,372, hits per frag:  1.20351[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 1,132,745, hits per frag:  1.14852[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 1,701,126, hits per frag:  1.15168[A[32mprocessed[31m 2,000,000 [32mfragments[0m
+hits: 2,272,064, hits per frag:  1.15581[A[32mprocessed[31m 2,500,000 [32mfragments[0m
+hits: 2,833,648, hits per frag:  1.13679[A[32mprocessed[31m 3,000,000 [32mfragments[0m
+hits: 3,401,052, hits per frag:  1.14455[A[32mprocessed[31m 3,500,000 [32mfragments[0m
+hits: 3,965,533, hits per frag:  1.13754
+
+
+
+
+
+
+
+[2020-11-10 20:46:08.415] [jointLog] [info] Computed 48,069 rich equivalence classes for further processing
+[2020-11-10 20:46:08.415] [jointLog] [info] Counted 996,542 total reads in the equivalence classes 
+[2020-11-10 20:46:08.420] [jointLog] [info] Number of mappings discarded because of alignment score : 4,771,715
+[2020-11-10 20:46:08.420] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 473,620
+[2020-11-10 20:46:08.420] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:46:08.420] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 17,983
+[2020-11-10 20:46:08.447] [jointLog] [warning] Only 996542 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:46:08.447] [jointLog] [info] Mapping rate = 26.6657%
+
+[2020-11-10 20:46:08.447] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:46:08.450] [jointLog] [info] Starting optimizer
+[2020-11-10 20:46:08.537] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:46:08.543] [jointLog] [info] iteration = 0 | max rel diff. = 383.157
+[2020-11-10 20:46:09.063] [jointLog] [info] iteration = 100 | max rel diff. = 13.7209
+[2020-11-10 20:46:09.577] [jointLog] [info] iteration = 200 | max rel diff. = 3.15206
+[2020-11-10 20:46:10.091] [jointLog] [info] iteration = 300 | max rel diff. = 0.783434
+[2020-11-10 20:46:10.598] [jointLog] [info] iteration = 400 | max rel diff. = 1.55122
+[2020-11-10 20:46:11.105] [jointLog] [info] iteration = 500 | max rel diff. = 0.0558289
+[2020-11-10 20:46:11.427] [jointLog] [info] iteration = 564 | max rel diff. = 0.00979251
+[2020-11-10 20:46:11.431] [jointLog] [info] Finished optimizer
+[2020-11-10 20:46:11.431] [jointLog] [info] writing output 
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K21_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K21_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K21_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K21_quant/logs
+[2020-11-10 20:46:13.065] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:46:13.065] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:46:13.065] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:46:13.065] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:46:13.065] [jointLog] [info] parsing read library format
+[2020-11-10 20:46:13.065] [jointLog] [info] There is 1 library.
+[2020-11-10 20:46:13.104] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:46:13.104] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 105.8 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 5.0194 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 7.0503 ms
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 55.067 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 199.89 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 39.843 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 136.63 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 74.352 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 10.121 ms
+-----------------------------------------
+[2020-11-10 20:46:13.745] [jointLog] [info] done
+[2020-11-10 20:46:13.746] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:46:13.825] [jointLog] [info] Number of decoys : 0
+
+
+
+
+
+
+
+
+
+
+
+
+[2020-11-10 20:46:14.048] [jointLog] [info] Computed 549 rich equivalence classes for further processing
+[2020-11-10 20:46:14.048] [jointLog] [info] Counted 615 total reads in the equivalence classes 
+[2020-11-10 20:46:14.057] [jointLog] [info] Number of mappings discarded because of alignment score : 715
+[2020-11-10 20:46:14.057] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 100
+[2020-11-10 20:46:14.057] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:46:14.057] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 28
+[2020-11-10 20:46:14.074] [jointLog] [warning] Only 615 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:46:14.074] [jointLog] [info] Mapping rate = 45.9985%
+
+[2020-11-10 20:46:14.074] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:46:14.075] [jointLog] [info] Starting optimizer
+[2020-11-10 20:46:14.131] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:46:14.134] [jointLog] [info] iteration = 0 | max rel diff. = 0.999688
+[2020-11-10 20:46:14.490] [jointLog] [info] iteration = 100 | max rel diff. = 3.93819e-15
+[2020-11-10 20:46:14.494] [jointLog] [info] Finished optimizer
+[2020-11-10 20:46:14.494] [jointLog] [info] writing output 
+
+[2020-11-10 20:46:14.871] [jointLog] [warning] NOTE: Read Lib [[ /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K21_1_trimmed_paired.fastq.gz, /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K21_2_trimmed_paired.fastq.gz]] :
+
+Detected a *potential* strand bias > 1% in an unstranded protocol check the file: /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K21_quant/lib_format_counts.json for details
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K28_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K28_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K28_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K28_quant/logs
+[2020-11-10 20:46:15.793] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:46:15.793] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:46:15.793] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:46:15.793] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:46:15.793] [jointLog] [info] parsing read library format
+[2020-11-10 20:46:15.793] [jointLog] [info] There is 1 library.
+[2020-11-10 20:46:15.831] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:46:15.831] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 112.43 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 7.0394 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 629.54 us
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 16.773 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 186.56 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 10.341 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 78.384 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 24.858 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 3.2244 ms
+-----------------------------------------
+
+
+
+
+[2020-11-10 20:46:16.279] [jointLog] [info] done
+[2020-11-10 20:46:16.279] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:46:16.357] [jointLog] [info] Number of decoys : 0
+[2020-11-10 20:46:17.823] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 305,643, hits per frag:  0.641718[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 610,639, hits per frag:  0.628957[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 918,404, hits per frag:  0.62397[A[32mprocessed[31m 2,000,000 [32mfragments[0m
+hits: 1,223,966, hits per frag:  0.622244
+
+
+
+
+
+
+
+[2020-11-10 20:46:39.529] [jointLog] [info] Computed 35,275 rich equivalence classes for further processing
+[2020-11-10 20:46:39.529] [jointLog] [info] Counted 591,791 total reads in the equivalence classes 
+[2020-11-10 20:46:39.534] [jointLog] [info] Number of mappings discarded because of alignment score : 2,133,363
+[2020-11-10 20:46:39.534] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 284,966
+[2020-11-10 20:46:39.534] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:46:39.534] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 16,839
+[2020-11-10 20:46:39.550] [jointLog] [warning] Only 591791 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:46:39.550] [jointLog] [info] Mapping rate = 27.7404%
+
+[2020-11-10 20:46:39.550] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:46:39.553] [jointLog] [info] Starting optimizer
+[2020-11-10 20:46:39.617] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:46:39.622] [jointLog] [info] iteration = 0 | max rel diff. = 228.975
+[2020-11-10 20:46:40.081] [jointLog] [info] iteration = 100 | max rel diff. = 0.720894
+[2020-11-10 20:46:40.538] [jointLog] [info] iteration = 200 | max rel diff. = 1.41318
+[2020-11-10 20:46:40.996] [jointLog] [info] iteration = 300 | max rel diff. = 0.0468205
+[2020-11-10 20:46:41.454] [jointLog] [info] iteration = 400 | max rel diff. = 0.330161
+[2020-11-10 20:46:41.912] [jointLog] [info] iteration = 500 | max rel diff. = 0.0565018
+[2020-11-10 20:46:42.118] [jointLog] [info] iteration = 546 | max rel diff. = 0.00871203
+[2020-11-10 20:46:42.123] [jointLog] [info] Finished optimizer
+[2020-11-10 20:46:42.123] [jointLog] [info] writing output 
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K28_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K28_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K28_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K28_quant/logs
+[2020-11-10 20:46:43.068] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:46:43.068] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:46:43.068] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:46:43.068] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:46:43.068] [jointLog] [info] parsing read library format
+[2020-11-10 20:46:43.068] [jointLog] [info] There is 1 library.
+[2020-11-10 20:46:43.105] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:46:43.105] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 109 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 8.7151 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 6.8047 ms
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 63.628 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 194.8 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 52.045 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 70.337 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 80.491 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 1.7743 ms
+-----------------------------------------
+[2020-11-10 20:46:43.694] [jointLog] [info] done
+[2020-11-10 20:46:43.694] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:46:43.773] [jointLog] [info] Number of decoys : 0
+
+
+
+
+[2020-11-10 20:46:45.233] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 305,411, hits per frag:  0.648622[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 610,602, hits per frag:  0.623955[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 918,459, hits per frag:  0.62066[A[32mprocessed[31m 2,000,000 [32mfragments[0m
+hits: 1,224,093, hits per frag:  0.61832
+
+
+
+
+
+
+
+[2020-11-10 20:47:06.439] [jointLog] [info] Computed 35,221 rich equivalence classes for further processing
+[2020-11-10 20:47:06.439] [jointLog] [info] Counted 591,791 total reads in the equivalence classes 
+[2020-11-10 20:47:06.443] [jointLog] [info] Number of mappings discarded because of alignment score : 2,133,363
+[2020-11-10 20:47:06.443] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 284,966
+[2020-11-10 20:47:06.443] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:47:06.443] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 16,839
+[2020-11-10 20:47:06.460] [jointLog] [warning] Only 591791 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:47:06.460] [jointLog] [info] Mapping rate = 27.7404%
+
+[2020-11-10 20:47:06.460] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:47:06.462] [jointLog] [info] Starting optimizer
+[2020-11-10 20:47:06.525] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:47:06.530] [jointLog] [info] iteration = 0 | max rel diff. = 229.965
+[2020-11-10 20:47:06.990] [jointLog] [info] iteration = 100 | max rel diff. = 0.710029
+[2020-11-10 20:47:07.453] [jointLog] [info] iteration = 200 | max rel diff. = 1.47365
+[2020-11-10 20:47:07.913] [jointLog] [info] iteration = 300 | max rel diff. = 0.0467585
+[2020-11-10 20:47:08.371] [jointLog] [info] iteration = 400 | max rel diff. = 0.741052
+[2020-11-10 20:47:08.830] [jointLog] [info] iteration = 500 | max rel diff. = 0.0536915
+[2020-11-10 20:47:09.005] [jointLog] [info] iteration = 539 | max rel diff. = 0.00895735
+[2020-11-10 20:47:09.010] [jointLog] [info] Finished optimizer
+[2020-11-10 20:47:09.010] [jointLog] [info] writing output 
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K29_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K29_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K29_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K29_quant/logs
+[2020-11-10 20:47:10.318] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:47:10.318] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:47:10.318] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:47:10.318] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:47:10.318] [jointLog] [info] parsing read library format
+[2020-11-10 20:47:10.318] [jointLog] [info] There is 1 library.
+[2020-11-10 20:47:10.356] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:47:10.356] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 116.51 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 8.5074 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 589.62 us
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 48.44 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 209.6 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 50.044 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 92.057 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 53.704 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 5.5892 ms
+-----------------------------------------
+[2020-11-10 20:47:10.950] [jointLog] [info] done
+[2020-11-10 20:47:10.950] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:47:11.030] [jointLog] [info] Number of decoys : 0
+
+
+
+
+[2020-11-10 20:47:11.568] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 1,402,394, hits per frag:  3.03468[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 2,797,879, hits per frag:  2.90652[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 4,190,383, hits per frag:  2.85146[A[32mprocessed[31m 2,000,000 [32mfragments[0m
+hits: 5,581,385, hits per frag:  2.82442[A[32mprocessed[31m 2,500,000 [32mfragments[0m
+hits: 6,979,291, hits per frag:  2.8086[A[32mprocessed[31m 3,000,000 [32mfragments[0m
+hits: 8,374,151, hits per frag:  2.81018[A[32mprocessed[31m 3,500,000 [32mfragments[0m
+hits: 9,766,285, hits per frag:  2.8243[A[32mprocessed[31m 4,000,000 [32mfragments[0m
+hits: 11,158,349, hits per frag:  2.81477[A[32mprocessed[31m 4,500,000 [32mfragments[0m
+hits: 12,549,496, hits per frag:  2.79407[A[32mprocessed[31m 5,000,000 [32mfragments[0m
+hits: 13,947,094, hits per frag:  2.79775[A[32mprocessed[31m 5,500,000 [32mfragments[0m
+hits: 15,345,593, hits per frag:  2.80332[A[32mprocessed[31m 6,000,000 [32mfragments[0m
+hits: 16,745,745, hits per frag:  2.8086[A[32mprocessed[31m 6,500,000 [32mfragments[0m
+hits: 18,137,717, hits per frag:  2.80394[A[32mprocessed[31m 7,000,000 [32mfragments[0m
+hits: 19,535,194, hits per frag:  2.79502[A[32mprocessed[31m 7,500,000 [32mfragments[0m
+hits: 20,930,058, hits per frag:  2.79372
+
+
+
+
+
+
+
+[2020-11-10 20:48:20.378] [jointLog] [info] Computed 259,870 rich equivalence classes for further processing
+[2020-11-10 20:48:20.378] [jointLog] [info] Counted 4,784,907 total reads in the equivalence classes 
+[2020-11-10 20:48:20.384] [jointLog] [info] Number of mappings discarded because of alignment score : 3,805,704
+[2020-11-10 20:48:20.384] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 727,364
+[2020-11-10 20:48:20.384] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:48:20.384] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 90,153
+[2020-11-10 20:48:20.401] [jointLog] [warning] Only 4784907 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:48:20.401] [jointLog] [info] Mapping rate = 63.0284%
+
+[2020-11-10 20:48:20.401] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:48:20.404] [jointLog] [info] Starting optimizer
+[2020-11-10 20:48:20.518] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:48:20.530] [jointLog] [info] iteration = 0 | max rel diff. = 1706.57
+[2020-11-10 20:48:21.728] [jointLog] [info] iteration = 100 | max rel diff. = 13.8893
+[2020-11-10 20:48:22.922] [jointLog] [info] iteration = 200 | max rel diff. = 15.6498
+[2020-11-10 20:48:24.112] [jointLog] [info] iteration = 300 | max rel diff. = 20.0625
+[2020-11-10 20:48:25.304] [jointLog] [info] iteration = 400 | max rel diff. = 19.3425
+[2020-11-10 20:48:26.490] [jointLog] [info] iteration = 500 | max rel diff. = 2.55074
+[2020-11-10 20:48:27.657] [jointLog] [info] iteration = 600 | max rel diff. = 3.95394
+[2020-11-10 20:48:28.821] [jointLog] [info] iteration = 700 | max rel diff. = 0.139503
+[2020-11-10 20:48:29.984] [jointLog] [info] iteration = 800 | max rel diff. = 0.152647
+[2020-11-10 20:48:31.148] [jointLog] [info] iteration = 900 | max rel diff. = 0.10352
+[2020-11-10 20:48:32.311] [jointLog] [info] iteration = 1,000 | max rel diff. = 0.0310451
+[2020-11-10 20:48:33.473] [jointLog] [info] iteration = 1,100 | max rel diff. = 0.0885648
+[2020-11-10 20:48:34.519] [jointLog] [info] iteration = 1,191 | max rel diff. = 0.00782679
+[2020-11-10 20:48:34.524] [jointLog] [info] Finished optimizer
+[2020-11-10 20:48:34.524] [jointLog] [info] writing output 
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K31_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K31_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K31_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K31_quant/logs
+[2020-11-10 20:48:35.617] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:48:35.617] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:48:35.617] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:48:35.617] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:48:35.617] [jointLog] [info] parsing read library format
+[2020-11-10 20:48:35.617] [jointLog] [info] There is 1 library.
+[2020-11-10 20:48:35.655] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:48:35.655] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 105.71 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 9.6105 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 6.6484 ms
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 42.388 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 188.78 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 40.089 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 123.79 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 64.983 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 7.5053 ms
+-----------------------------------------
+[2020-11-10 20:48:36.252] [jointLog] [info] done
+[2020-11-10 20:48:36.252] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:48:36.331] [jointLog] [info] Number of decoys : 0
+
+
+
+
+[2020-11-10 20:48:37.715] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 579,025, hits per frag:  1.21968[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 1,156,676, hits per frag:  1.18254[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 1,732,605, hits per frag:  1.16453[A[32mprocessed[31m 2,000,001 [32mfragments[0m
+hits: 2,314,813, hits per frag:  1.16642[A[32mprocessed[31m 2,500,000 [32mfragments[0m
+hits: 2,888,585, hits per frag:  1.17155[A[32mprocessed[31m 3,000,000 [32mfragments[0m
+hits: 3,469,186, hits per frag:  1.16478[A[32mprocessed[31m 3,500,000 [32mfragments[0m
+hits: 4,047,731, hits per frag:  1.16767[A[32mprocessed[31m 4,000,000 [32mfragments[0m
+hits: 4,622,960, hits per frag:  1.16561
+
+
+
+
+
+
+
+[2020-11-10 20:49:41.712] [jointLog] [info] Computed 51,511 rich equivalence classes for further processing
+[2020-11-10 20:49:41.712] [jointLog] [info] Counted 1,446,670 total reads in the equivalence classes 
+[2020-11-10 20:49:41.717] [jointLog] [info] Number of mappings discarded because of alignment score : 7,969,631
+[2020-11-10 20:49:41.717] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 598,734
+[2020-11-10 20:49:41.717] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:49:41.717] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 32,030
+[2020-11-10 20:49:41.734] [jointLog] [warning] Only 1446670 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:49:41.734] [jointLog] [info] Mapping rate = 32.2201%
+
+[2020-11-10 20:49:41.734] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:49:41.737] [jointLog] [info] Starting optimizer
+[2020-11-10 20:49:41.805] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:49:41.811] [jointLog] [info] iteration = 0 | max rel diff. = 551.304
+[2020-11-10 20:49:42.341] [jointLog] [info] iteration = 100 | max rel diff. = 17.9588
+[2020-11-10 20:49:42.865] [jointLog] [info] iteration = 200 | max rel diff. = 0.822215
+[2020-11-10 20:49:43.388] [jointLog] [info] iteration = 300 | max rel diff. = 3.75138
+[2020-11-10 20:49:43.911] [jointLog] [info] iteration = 400 | max rel diff. = 0.273951
+[2020-11-10 20:49:44.439] [jointLog] [info] iteration = 500 | max rel diff. = 0.0383635
+[2020-11-10 20:49:44.964] [jointLog] [info] iteration = 600 | max rel diff. = 0.499533
+[2020-11-10 20:49:45.486] [jointLog] [info] iteration = 700 | max rel diff. = 0.0424122
+[2020-11-10 20:49:45.580] [jointLog] [info] iteration = 719 | max rel diff. = 0.00518744
+[2020-11-10 20:49:45.585] [jointLog] [info] Finished optimizer
+[2020-11-10 20:49:45.585] [jointLog] [info] writing output 
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K32_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K32_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K32_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K32_quant/logs
+[2020-11-10 20:49:46.869] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:49:46.869] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:49:46.869] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:49:46.869] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:49:46.869] [jointLog] [info] parsing read library format
+[2020-11-10 20:49:46.869] [jointLog] [info] There is 1 library.
+[2020-11-10 20:49:46.907] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:49:46.907] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 104.59 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 9.6019 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 10.381 ms
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 79.394 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 199.2 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 44.694 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 110.44 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 35.977 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 4.3317 ms
+-----------------------------------------
+[2020-11-10 20:49:47.517] [jointLog] [info] done
+[2020-11-10 20:49:47.517] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:49:47.595] [jointLog] [info] Number of decoys : 0
+
+
+
+
+[2020-11-10 20:49:48.740] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 406,738, hits per frag:  0.824117[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 811,020, hits per frag:  0.837769[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 1,217,467, hits per frag:  0.822048[A[32mprocessed[31m 2,000,000 [32mfragments[0m
+hits: 1,623,370, hits per frag:  0.812532[A[32mprocessed[31m 2,500,000 [32mfragments[0m
+hits: 2,027,595, hits per frag:  0.8124[A[32mprocessed[31m 3,000,000 [32mfragments[0m
+hits: 2,434,923, hits per frag:  0.82201[A[32mprocessed[31m 3,500,000 [32mfragments[0m
+hits: 2,839,399, hits per frag:  0.814246[A[32mprocessed[31m 4,000,000 [32mfragments[0m
+hits: 3,246,318, hits per frag:  0.813318[A[32mprocessed[31m 4,500,001 [32mfragments[0m
+hits: 3,653,881, hits per frag:  0.819582[A[32mprocessed[31m 5,000,000 [32mfragments[0m
+hits: 4,059,693, hits per frag:  0.81851[A[32mprocessed[31m 5,500,000 [32mfragments[0m
+hits: 4,465,077, hits per frag:  0.813676[A[32mprocessed[31m 6,000,000 [32mfragments[0m
+hits: 4,870,230, hits per frag:  0.817207
+
+
+
+
+
+
+
+[2020-11-10 20:50:49.715] [jointLog] [info] Computed 63,121 rich equivalence classes for further processing
+[2020-11-10 20:50:49.715] [jointLog] [info] Counted 1,872,276 total reads in the equivalence classes 
+[2020-11-10 20:50:49.720] [jointLog] [info] Number of mappings discarded because of alignment score : 4,244,432
+[2020-11-10 20:50:49.720] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 939,741
+[2020-11-10 20:50:49.720] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:50:49.720] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 30,682
+[2020-11-10 20:50:49.737] [jointLog] [warning] Only 1872276 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:50:49.737] [jointLog] [info] Mapping rate = 28.8617%
+
+[2020-11-10 20:50:49.737] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:50:49.739] [jointLog] [info] Starting optimizer
+[2020-11-10 20:50:49.810] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:50:49.817] [jointLog] [info] iteration = 0 | max rel diff. = 706.834
+[2020-11-10 20:50:50.372] [jointLog] [info] iteration = 100 | max rel diff. = 11.6426
+[2020-11-10 20:50:50.922] [jointLog] [info] iteration = 200 | max rel diff. = 11.9256
+[2020-11-10 20:50:51.470] [jointLog] [info] iteration = 300 | max rel diff. = 2.68283
+[2020-11-10 20:50:52.018] [jointLog] [info] iteration = 400 | max rel diff. = 0.0698859
+[2020-11-10 20:50:52.566] [jointLog] [info] iteration = 500 | max rel diff. = 0.0660151
+[2020-11-10 20:50:53.118] [jointLog] [info] iteration = 600 | max rel diff. = 0.0333599
+[2020-11-10 20:50:53.668] [jointLog] [info] iteration = 700 | max rel diff. = 3.565
+[2020-11-10 20:50:54.220] [jointLog] [info] iteration = 800 | max rel diff. = 0.139925
+[2020-11-10 20:50:54.467] [jointLog] [info] iteration = 846 | max rel diff. = 0.00759281
+[2020-11-10 20:50:54.472] [jointLog] [info] Finished optimizer
+[2020-11-10 20:50:54.472] [jointLog] [info] writing output 
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K34_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K34_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K34_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K34_quant/logs
+[2020-11-10 20:50:55.666] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:50:55.666] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:50:55.666] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:50:55.666] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:50:55.666] [jointLog] [info] parsing read library format
+[2020-11-10 20:50:55.666] [jointLog] [info] There is 1 library.
+[2020-11-10 20:50:55.704] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:50:55.704] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 108.42 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 11.133 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 6.1234 ms
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 46.754 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 194.23 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 56.498 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 130.48 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 49.315 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 6.4771 ms
+-----------------------------------------
+[2020-11-10 20:50:56.323] [jointLog] [info] done
+[2020-11-10 20:50:56.323] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:50:56.405] [jointLog] [info] Number of decoys : 0
+
+
+
+
+[2020-11-10 20:50:58.164] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 265,894, hits per frag:  0.55385[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 531,199, hits per frag:  0.533631[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 794,253, hits per frag:  0.544067[A[32mprocessed[31m 2,000,000 [32mfragments[0m
+hits: 1,057,958, hits per frag:  0.530451[A[32mprocessed[31m 2,500,000 [32mfragments[0m
+hits: 1,321,958, hits per frag:  0.537366[A[32mprocessed[31m 3,000,000 [32mfragments[0m
+hits: 1,586,446, hits per frag:  0.530059[A[32mprocessed[31m 3,500,000 [32mfragments[0m
+hits: 1,849,667, hits per frag:  0.530398[A[32mprocessed[31m 4,000,000 [32mfragments[0m
+hits: 2,110,839, hits per frag:  0.529748
+
+
+
+
+
+
+
+[2020-11-10 20:51:46.937] [jointLog] [info] Computed 52,947 rich equivalence classes for further processing
+[2020-11-10 20:51:46.937] [jointLog] [info] Counted 981,966 total reads in the equivalence classes 
+[2020-11-10 20:51:46.941] [jointLog] [info] Number of mappings discarded because of alignment score : 5,086,261
+[2020-11-10 20:51:46.941] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 509,799
+[2020-11-10 20:51:46.941] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:51:46.941] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 30,777
+[2020-11-10 20:51:46.958] [jointLog] [warning] Only 981966 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:51:46.958] [jointLog] [info] Mapping rate = 22.6583%
+
+[2020-11-10 20:51:46.958] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:51:46.960] [jointLog] [info] Starting optimizer
+[2020-11-10 20:51:47.030] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:51:47.036] [jointLog] [info] iteration = 0 | max rel diff. = 376.433
+[2020-11-10 20:51:47.551] [jointLog] [info] iteration = 100 | max rel diff. = 16.0375
+[2020-11-10 20:51:48.065] [jointLog] [info] iteration = 200 | max rel diff. = 0.384852
+[2020-11-10 20:51:48.576] [jointLog] [info] iteration = 300 | max rel diff. = 0.162571
+[2020-11-10 20:51:49.087] [jointLog] [info] iteration = 400 | max rel diff. = 0.169442
+[2020-11-10 20:51:49.598] [jointLog] [info] iteration = 500 | max rel diff. = 0.0351481
+[2020-11-10 20:51:49.746] [jointLog] [info] iteration = 530 | max rel diff. = 0.00847466
+[2020-11-10 20:51:49.750] [jointLog] [info] Finished optimizer
+[2020-11-10 20:51:49.750] [jointLog] [info] writing output 
+
+Version Info: ### PLEASE UPGRADE SALMON ###
+### A newer version of salmon with important bug fixes and improvements is available. ####
+###
+The newest version, available at https://github.com/COMBINE-lab/salmon/releases
+contains new features, improvements, and bug fixes; please upgrade at your
+earliest convenience.
+###
+Sign up for the salmon mailing list to hear about new versions, features and updates at:
+https://oceangenomics.com/subscribe
+###
+### salmon (mapping-based) v1.2.0
+### [ program ] => salmon 
+### [ command ] => quant 
+### [ index ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/data/refs/Pstrigosa_salmon_index }
+### [ libType ] => { A }
+### [ mates1 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K36_1_trimmed_paired.fastq.gz }
+### [ mates2 ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/trimmomaticreads/K36_2_trimmed_paired.fastq.gz }
+### [ threads ] => { 8 }
+### [ validateMappings ] => { }
+### [ output ] => { /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K36_quant }
+Logs will be written to /scratch/projects/transcriptomics/mikeconnelly/projects/sctld_jamboree/rnaseq/outputs/salmon_quants/K36_quant/logs
+[2020-11-10 20:51:50.932] [jointLog] [info] setting maxHashResizeThreads to 8
+[2020-11-10 20:51:50.932] [jointLog] [info] Fragment incompatibility prior below threshold.  Incompatible fragments will be ignored.
+[2020-11-10 20:51:50.932] [jointLog] [info] Usage of --validateMappings implies use of minScoreFraction. Since not explicitly specified, it is being set to 0.65
+[2020-11-10 20:51:50.932] [jointLog] [info] Usage of --validateMappings implies a default consensus slack of 0.2. Setting consensusSlack to 0.35.
+[2020-11-10 20:51:50.932] [jointLog] [info] parsing read library format
+[2020-11-10 20:51:50.932] [jointLog] [info] There is 1 library.
+[2020-11-10 20:51:50.970] [jointLog] [info] Loading pufferfish index
+[2020-11-10 20:51:50.970] [jointLog] [info] Loading dense pufferfish index.
+-----------------------------------------
+| Loading contig table | Time = 119.24 ms
+-----------------------------------------
+size = 611150
+-----------------------------------------
+| Loading contig offsets | Time = 8.5986 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference lengths | Time = 9.3684 ms
+-----------------------------------------
+-----------------------------------------
+| Loading mphf table | Time = 33.325 ms
+-----------------------------------------
+size = 75924348
+Number of ones: 611149
+Number of ones per inventory item: 512
+Inventory entries filled: 1194
+-----------------------------------------
+| Loading contig boundaries | Time = 216.66 ms
+-----------------------------------------
+size = 75924348
+-----------------------------------------
+| Loading sequence | Time = 60.926 ms
+-----------------------------------------
+size = 57589878
+-----------------------------------------
+| Loading positions | Time = 115.41 ms
+-----------------------------------------
+size = 167125092
+-----------------------------------------
+| Loading reference sequence | Time = 55.55 ms
+-----------------------------------------
+-----------------------------------------
+| Loading reference accumulative lengths | Time = 7.0833 ms
+-----------------------------------------
+[2020-11-10 20:51:51.605] [jointLog] [info] done
+[2020-11-10 20:51:51.605] [jointLog] [info] Index contained 252,990 targets
+[2020-11-10 20:51:51.686] [jointLog] [info] Number of decoys : 0
+
+
+
+
+[2020-11-10 20:51:52.956] [jointLog] [info] Automatically detected most likely library type as IU
+[A[32mprocessed[31m 500,000 [32mfragments[0m
+hits: 531,206, hits per frag:  1.13574[A[32mprocessed[31m 1,000,000 [32mfragments[0m
+hits: 1,057,333, hits per frag:  1.07672[A[32mprocessed[31m 1,500,000 [32mfragments[0m
+hits: 1,591,345, hits per frag:  1.07898[A[32mprocessed[31m 2,000,000 [32mfragments[0m
+hits: 2,116,156, hits per frag:  1.06054[A[32mprocessed[31m 2,500,000 [32mfragments[0m
+hits: 2,650,633, hits per frag:  1.0628[A[32mprocessed[31m 3,000,000 [32mfragments[0m
+hits: 3,176,337, hits per frag:  1.06507[A[32mprocessed[31m 3,500,000 [32mfragments[0m
+hits: 3,707,160, hits per frag:  1.06377
+
+
+
+
+
+
+
+[2020-11-10 20:52:42.379] [jointLog] [info] Computed 58,491 rich equivalence classes for further processing
+[2020-11-10 20:52:42.379] [jointLog] [info] Counted 1,191,080 total reads in the equivalence classes 
+[2020-11-10 20:52:42.384] [jointLog] [info] Number of mappings discarded because of alignment score : 5,166,645
+[2020-11-10 20:52:42.384] [jointLog] [info] Number of fragments entirely discarded because of alignment score : 491,254
+[2020-11-10 20:52:42.384] [jointLog] [info] Number of fragments discarded because they are best-mapped to decoys : 0
+[2020-11-10 20:52:42.384] [jointLog] [info] Number of fragments discarded because they have only dovetail (discordant) mappings to valid targets : 35,657
+[2020-11-10 20:52:42.400] [jointLog] [warning] Only 1191080 fragments were mapped, but the number of burn-in fragments was set to 5000000.
+The effective lengths have been computed using the observed mappings.
+
+[2020-11-10 20:52:42.400] [jointLog] [info] Mapping rate = 30.4635%
+
+[2020-11-10 20:52:42.400] [jointLog] [info] finished quantifyLibrary()
+[2020-11-10 20:52:42.403] [jointLog] [info] Starting optimizer
+[2020-11-10 20:52:42.474] [jointLog] [info] Marked 0 weighted equivalence classes as degenerate
+[2020-11-10 20:52:42.480] [jointLog] [info] iteration = 0 | max rel diff. = 457.984
+[2020-11-10 20:52:43.023] [jointLog] [info] iteration = 100 | max rel diff. = 9.22569
+[2020-11-10 20:52:43.560] [jointLog] [info] iteration = 200 | max rel diff. = 0.31036
+[2020-11-10 20:52:44.096] [jointLog] [info] iteration = 300 | max rel diff. = 0.758103
+[2020-11-10 20:52:44.634] [jointLog] [info] iteration = 400 | max rel diff. = 0.22781
+[2020-11-10 20:52:45.172] [jointLog] [info] iteration = 500 | max rel diff. = 0.415101
+[2020-11-10 20:52:45.708] [jointLog] [info] iteration = 600 | max rel diff. = 0.0613452
+[2020-11-10 20:52:45.841] [jointLog] [info] iteration = 626 | max rel diff. = 0.00977629
+[2020-11-10 20:52:45.846] [jointLog] [info] Finished optimizer
+[2020-11-10 20:52:45.846] [jointLog] [info] writing output 
+

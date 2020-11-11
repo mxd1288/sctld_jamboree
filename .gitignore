@@ -11,3 +11,7 @@ rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.gff3
 rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.pep
 rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.bed
 rnaseq/data/refs/Pstrigosa_assembly.fasta.transdecoder.cds
+rnaseq/data/refs/Pstrigosa_transdecoder/
+rnaseq/data/refs/Pstrigosa_salmon_index/
+rnaseq/data/refs/..__checkpoints/
+rnaseq/data/refs/..__checkpoints_longorfs/
