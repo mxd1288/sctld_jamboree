@@ -1,0 +1,250 @@
+---
+title: "Sctld_RNAseq_WGCNA"
+author: "Mike Connelly"
+date: "11/11/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r packages}
+# install.packages("tidyverse", "DESeq2", "pheatmap")
+library("tidyverse")
+library("here")
+library("tximport")
+library("DESeq2")
+library("WGCNA")
+library("flashClust")
+# extended visualization functions
+source(here("R", "custom_viz_functions.R"))
+```
+
+```{r import_data}
+samples <- read_csv(here("data", "metadata.csv"))
+# 
+samples <- read_csv(here("data", "metadata_pcliv.csv"), 
+                    col_types = cols(
+  K_ID = col_character(),
+  Tube_Label = col_logical(),
+  Project = col_character(),
+  Coral_species = col_character(),
+  Date_Collected = col_character(),
+  Coral_Genotype = col_character(),
+  pct_progress = col_double(),
+  Transmission_species = col_logical(),
+  Treatment = col_character(),
+  X10 = col_logical()
+))
+```
+
+```{r tximport}
+quant_folders <- str_c(samples$K_ID, "_quant")
+quant_files <- file.path(here("outputs", "salmon_quants", quant_folders), pattern = "quant.sf")
+quant_files
+txi <- tximport(quant_files, type="salmon",
+                txIn = T, txOut = T,
+                countsFromAbundance = "no")
+?tximport
+```
+```{r transcript_annotation}
+gene_annotation <- read.delim(file = "./data/psst_annotations.tsv", header = T) %>% arrange(ID)
+# rownames(gene_annotation) <- gene_annotation$ID
+# # Check gene feature annotation and countdata rowname order coherence
+# all(rownames(countdata.sorted) == gene_annotation$ID)
+# all(rownames(countdata.sorted) ==  rownames(gene_annotation))
+# # Obtain KOG annotations for P. damicornis genome
+# gene2kog <- gene_annotation %>%
+#   dplyr::select(ID, KOG_Class) %>% 
+#   filter(KOG_Class != "")
+```
+
+```{r create_DESeq_dataset}
+ddsTxi <- DESeqDataSetFromTximport(txi,
+                                   colData = samples,
+                                   design = ~ Treatment)
+```
+```{r inspect_DESeq_dataset}
+# Check annotation and dds object rowname order coherence
+# all(rownames(dds) == rownames(gene_annotation))
+# # Add gene feature annotation to DESeqDataSets
+# mcols(dds) <- cbind(mcols(dds), gene_annotation)
+# Subset DESeqDataSet
+# Remove genes with counts less than 10 in 90% of samples
+keep_tencounts <-  rowSums(counts(ddsTxi)) >= 5
+keep_ninety <- rowSums(counts(ddsTxi) >= 5) > (6*0.9)
+ddsTxi <- ddsTxi[keep_ninety, ]
+nrow(ddsTxi)
+```
+```{r vst}
+# Normalize expression data for visualization purposes using VST tranformation
+vsd <- vst(ddsTxi, blind = TRUE) # use blind = TRUE to not account for experimental design
+```
+
+## Weighted gene co-expression network analysis (WGCNA)
+```{r wgcna_setup_datExpr}
+allowWGCNAThreads(nThreads = 4)
+# obtain vst-transformed counts
+countdata_vst <- assay(vsd)
+# Convert to matrix and transpose, check dimensions
+datExpr <- t(countdata_vst)
+dim(datExpr)
+```
+```{r soft_threshold}
+# Find correlation power R^N that satisfies scale free critereon (SFT.R.sq>0.9)
+sft <- pickSoftThreshold(datExpr, verbose=5)
+sft$powerEstimate
+```
+
+### Step-by-step network construction
+```{r adjacency_TOM}
+# This follows the tutorial: 
+# https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/Tutorials/FemaleLiver-02-networkConstr-man.pdf
+# 
+# I have chosen the following network construction parameters for the following reasons:
+# First, following the recommendations of the WGCNA developers (https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/faq.html), a signed network was chosen to be able to detect positive and negative gene correlations, and the biweight midcorrelation was used since it is more robust to outliers. 
+
+adjacency <- adjacency(datExpr,
+      # Network construction arguments:  correlation, adjacency function,  and topological overlap map options
+                       corFnc = "bicor", # bimidweight correlation
+                       # power = sft$powerEstimate, # 20
+                       power = 20,
+                       type = "signed") # signed
+# 
+TOM <- TOMsimilarity(adjacency,
+                     TOMType = "signed",
+                     verbose = 5)
+dissTOM <- 1-TOM
+# 
+rm(adjacency) # may need to delete adjacency, TOM to clear up vector memory
+```
+
+```{r gene_dendrogram}
+geneTree <- flashClust(as.dist(dissTOM), method = "average")
+plot(geneTree, labels = FALSE, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity")
+```
+```{r dynamic_treecut}
+# minModuleSize = 100 because I prefer large modules that lend themselves to enrichment tests with GO_MWU for easier interpretation.
+minModuleSize <- min(50, ncol(datExpr)/5 )
+# Module identification using dynamic tree cut, with cutHeight = 0.99 and deepSplit = 2 based on the recommendations of the WGCNA developers
+dynamicMods <- cutreeDynamic(dendro = geneTree,
+                             distM = dissTOM,
+                             cutHeight = 0.99,
+                             deepSplit = 2,
+                             pamRespectsDendro = FALSE,
+                             minClusterSize = minModuleSize)
+table(dynamicMods)
+# Convert numeric lables into colors
+dynamicColors <- labels2colors(dynamicMods, colorSeq = standardColors())
+```
+```{r module_dendrogram}
+# Calculate eigengenes
+MEList <- moduleEigengenes(datExpr, colors = dynamicColors)
+MEs <- MEList$eigengenes
+# Calculate dissimilarity of module eigengenes
+MEDiss <- 1-cor(MEs);
+# Cluster module eigengenes
+METree <- flashClust(as.dist(MEDiss), method = "average");
+# Plot the result
+plot(METree, main = "Clustering of module eigengenes",
+xlab = "", sub = "")
+MEDissThres = 0.1
+# Plot the cut line into the dendrogram
+abline(h=MEDissThres, col = "red")
+```
+```{r merge_modules}
+# Call an automatic merging function
+# merge cutHeight = 0.3 because I want to group together modules with >70% similar module eigengene expression
+mergedMods <- mergeCloseModules(datExpr, dynamicColors, cutHeight = 0.1, verbose = 5)
+# The merged module colors
+mergedColors <- mergedMods$colors
+table(mergedColors) 
+```
+```{r dendrogram_modules}
+# pdf(file = "./outputs/WGCNA-results/dendrogram.pdf", width = 8, height = 6)
+# pdf(file = "./manuscript_figures/FigS##_WGCNA_dendrogram.pdf", width = 8, height = 6)
+# Plot the dendrogram and the module colors underneath
+plotDendroAndColors(dendro = geneTree, 
+                    colors = cbind(dynamicColors, mergedColors),
+                    groupLabels = c("Dynamic modules", "Merged dynamic"),
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    abHeight = c(0.99))
+```
+```{r merged_eigengenes}
+MEList <- moduleEigengenes(datExpr, colors = mergedColors)
+mergedMEs <- MEList$eigengenes
+```
+```{r choose_modules}
+moduleColors <- mergedColors#netColors#
+MEs1 <- mergedMEs#netMEs#
+MEs1 <- MEs1 %>% select(-MEgrey)
+MEmodule_colors <- colnames(MEs1)
+module_colors <- gsub("ME", "", colnames(MEs1))
+colnames(MEs1) <- module_colors
+```
+```{r ME_clustering}
+datME <- MEs1
+dissimME <- (1-t(cor(datME, method="p")))/2
+hclustME <- flashClust(as.dist(dissimME), method="average" )
+# Plot the eigengene dendrogram
+par(mfrow=c(1,1))
+plot(hclustME, main="Clustering tree based on the module eigengenes")
+```
+```{r uniq_modules}
+# Extract all unique modules
+uniqModules <- unique(colnames(MEs1))
+# set in order according to ME clustering dendogram
+uniqModules <- uniqModules[hclustME$order]
+hclustME$order
+uniqModules
+```
+### Module transcripts and hub transcripts
+```{r modules_genes}
+# Generate GeneIDs
+Genes <- colnames(datExpr)
+# Output genes and annotations for each module
+for (module in uniqModules)
+{
+# Select module genes
+inModule <- (moduleColors == module)
+# Get gene IDs
+modGeneIDs <- Genes[inModule] #this is the correct set of gene IDs!
+# Write gene annotations into a file
+fileName = paste("./outputs/WGCNA_results/notes/", module, ".csv", sep="");
+# module_annotation <- gene_annotation[modGeneIDs, ]
+write_csv(module_annotation, path = fileName)
+}
+```
+
+```{r hub_genes}
+hubs <- chooseTopHubInEachModule(datExpr,
+                         mergedColors,
+                         corFnc = "bicor", # bimidweight correlation
+                         # power=sft$powerEstimate, # 10
+                         power = 20,
+                         type = "signed")
+# hub_genes <- gene_annotation[hubs, ]
+hub_genes$module <- names(hubs)
+row.names(hub_genes) <- NULL
+hub_genes <- hub_genes %>% dplyr::select(module, everything())
+write_csv(hub_genes, path = "./outputs/WGCNA-results/hub_genes.csv")
+```
+### Module eigengene correlations
+```{r treatment_trait_data}
+# Get sample data into tibble
+datTraits <- samples %>% 
+  dplyr::select(K_ID, pct_progress) %>%
+  arrange(K_ID) %>% #Order rows by sample name                         
+  column_to_rownames(var = "K_ID")
+datTraits$pct_progress[is.na(datTraits$pct_progress)] <- 0
+#Define numbers of genes and samples
+nGenes <- ncol(datExpr)
+nSamples <- nrow(datExpr)
+```
+```{r ME_correlations_treatments}
+# Correlate module eigengene-trait associations
+moduleTraitCor <- cor(MEs1, datTraits, use = "p")
+moduleTraitPvalue <- corPvalueStudent(moduleTraitCor, nSamples)
+moduleTraitCors <- as.data.frame(moduleTraitCor, moduleTraitPvalue)
+```
