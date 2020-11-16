@@ -24,7 +24,34 @@ The quant files are all on the box
 
 **PLEASE DO NOT UPLOAD THESE TO ANY PUBLIC PLACES AS THIS IS THE RAW DATA**
 
-You also do not need to do this as I have generated all the files you will need for analysis. This code is just for your reference on how I do it. 
+We are going to download the quant files so you can make the count tables yourself. To do that we are going to have a folder on the desktop as this means you will not have to chnage any paths.You just need to make sure everything is saved in the correct folders 
+
+```{bash}
+cd ~/Desktop
+mkdir SCTLD_analysis
+```
+
+```{bash}
+cd ~/Desktop/SCTLD_analysis
+mkdir scripts
+```
+
+Once you have done the above go to the box and download the  
++ ofav_salmon_quant/
++ mcav_salmon_quant/
++ metadata.csv
+
+These should be saved in the SCTLD_analysis folder so you should have a directory tree as such 
+
+Desktop/
+      |
+      ofav_salmon_quant/
+      mcav_salmon_quant/
+      scripts/
+      metadata.csv
+      
+
+
 
 ```{r Making Salmon Vectors Names ofav, include=FALSE}
 #Loading quantification data output from the slippery Salmon
