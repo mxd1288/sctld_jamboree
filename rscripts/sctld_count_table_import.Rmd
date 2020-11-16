@@ -76,6 +76,26 @@ write.csv(txi.salmon.count_ofav$length, file = "~/Desktop/SCTLD_tagseq/count_fol
 ```
 
 
+```{r}
+meta <- read.csv(file = "~/Desktop/SCTLD_tagseq/metadata.csv")
+str(meta)
+```
+
+Here, I filter the files I imported above and then filter them with the metadata file. This is needed as libraries failed and we only want the data for the samples that worked.  
+
+```{r filter mcav}
+meta %>% filter(salmon_label %in% mcavall) -> mcav_meta
+
+## Check our salmon and meta lengths the same
+length(mcavall)
+nrow(mcav_meta)
+```
+
+```{r filter ofav}
+meta %>% filter(salmon_label %in% ofavall) -> ofav_meta
+length(ofavall)
+nrow(ofav_meta)
+```
 
 
 
