@@ -51,12 +51,10 @@ Desktop/
       metadata.csv
       
 
-
-
 ```{r Making Salmon Vectors Names ofav, include=FALSE}
 #Loading quantification data output from the slippery Salmon
-setwd("~/Desktop/SCTLD_tagseq/ofav_quant/")
-ofavall <- list.files(path = "~/Desktop/SCTLD_tagseq/ofav_quant///", full.names = F, pattern = "\\_salmon$")
+setwd("~/Desktop/SCTLD_analysis/ofav_salmon_quant/")
+ofavall <- list.files(path = "~/Desktop/SCTLD_analysis/ofav_salmon_quant//", full.names = F, pattern = "\\_salmon$")
 
 FILESofav <- file.path(ofavall, "quant.sf")
 
@@ -67,8 +65,8 @@ all(file.exists(FILESofav))
 
 ```{r Making Salmon Vectors Names mcav, include=FALSE}
 #Loading quantification data output from the slippery Salmon
-setwd("~/Desktop/SCTLD_tagseq/mcav_quant/")
-mcavall <- list.files(path = "~/Desktop/SCTLD_tagseq/mcav_quant//", full.names = F, pattern = "\\_salmon$")
+setwd("~/Desktop/SCTLD_analysis/mcav_salmon_quant/")
+mcavall <- list.files(path = "~/Desktop/SCTLD_analysis/mcav_salmon_quant//", full.names = F, pattern = "\\_salmon$")
 
 FILESmcav <- file.path(mcavall, "quant.sf")
 
@@ -79,14 +77,20 @@ all(file.exists(FILESmcav))
 
 ```{r Reading in Salmon Files ofav, include=F}
 #Importing the count data using salmon quant.sf files and the text to gene file
-setwd("~/Desktop/SCTLD_tagseq/ofav_quant//")
+setwd("~/Desktop/SCTLD_analysis/ofav_salmon_quant//")
 txi.salmon.count_ofav <- tximport(FILESofav, type = "salmon", txOut = TRUE )
 ```
 
 ```{r Reading in Salmon Files mcav, include=F}
 #Importing the count data using salmon quant.sf files and the text to gene file
-setwd("~/Desktop/SCTLD_tagseq/mcav_quant//")
+setwd("~/Desktop/SCTLD_analysis/mcav_salmon_quant//")
 txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
+```
+
+We have read these in so lets just save all our count, abundance and length files as well
+
+```{bash}
+cd ~/Desktop/SCTLD_analysis/count_folder
 ```
 
 ```{r writing csv for all info mcav, include = F}
@@ -102,9 +106,10 @@ write.csv(txi.salmon.count_ofav$abundance , file = "~/Desktop/SCTLD_tagseq/count
 write.csv(txi.salmon.count_ofav$length, file = "~/Desktop/SCTLD_tagseq/count_folder/ofav_length.csv")
 ```
 
+Now we are going to read in the metadata file and fix these for both species
 
 ```{r}
-meta <- read.csv(file = "~/Desktop/SCTLD_tagseq/metadata.csv")
+meta <- read.csv(file = "~/Desktop/SCTLD_analysis/metadata.csv")
 str(meta)
 ```
 
