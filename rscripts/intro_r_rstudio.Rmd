@@ -65,7 +65,7 @@ library(DESeq2)
 ## Packages Needed for Analysis 
 
 ```{r}
-install.packages("tidyverse", )
+install.packages("tidyverse")
 ```
 
 ```{r}
@@ -74,21 +74,22 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 BiocManager::install("DESeq2")
 BiocManager::install("tximport")
 BiocManager::install("ComplexHeatmap")
-```
-
-```{r}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("ComplexHeatmap")
+BiocManager::install("DEGreport")
+BiocManager::install("limma")
+BiocManager::install("edgeR")
+BiocManager::install("pheatmap")
 ```
 
 
-```{r}
+```{r, echo = F}
 library(tximport)
 library(DESeq2)
 library(tidyverse)
 library(tximport)
 library(ComplexHeatmap)
+library(DEGreport)
+library(limma)
+library(edgeR)
+library(pheatmap)
 ```
 
