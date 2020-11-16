@@ -53,7 +53,6 @@ Desktop/
 
 ```{r Making Salmon Vectors Names ofav, include=FALSE}
 #Loading quantification data output from the slippery Salmon
-setwd("~/Desktop/SCTLD_analysis/ofav_salmon_quant/")
 ofavall <- list.files(path = "~/Desktop/SCTLD_analysis/ofav_salmon_quant//", full.names = F, pattern = "\\_salmon$")
 
 FILESofav <- file.path(ofavall, "quant.sf")
@@ -90,7 +89,8 @@ txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
 We have read these in so lets just save all our count, abundance and length files as well
 
 ```{bash}
-cd ~/Desktop/SCTLD_analysis/count_folder
+cd ~/Desktop/SCTLD_analysis/
+mkdir count_folder
 ```
 
 ```{r writing csv for all info mcav, include = F}
@@ -129,7 +129,13 @@ length(ofavall)
 nrow(ofav_meta)
 ```
 
+## Making DeSeq2 Object 
 
+```{r Making DeSeq object, include=FALSE}
+#making the dds model to use in deseq2
+dds_mcav = DESeqDataSetFromTximport(txi.salmon.count_mcav , mcav_meta, ~ Correct_treatment)
+dds_ofav = DESeqDataSetFromTximport(txi.salmon.count_ofav , ofav_meta, ~ Correct_treatment)
+```
 
 
 
