@@ -65,7 +65,6 @@ library(DESeq2)
 ## Packages Needed for Analysis 
 
 ```{r}
-library(tidyverse)
 install.packages("tidyverse", )
 ```
 
@@ -78,12 +77,18 @@ BiocManager::install("ComplexHeatmap")
 ```
 
 ```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("ComplexHeatmap")
+```
+
+
+```{r}
 library(tximport)
 library(DESeq2)
 library(tidyverse)
 library(tximport)
 library(ComplexHeatmap)
-remove.packages("grid")
-install.packages("grid")
 ```
 
