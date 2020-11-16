@@ -1,0 +1,89 @@
+---
+title: "ofav_mcav_sctld_count_import"
+output: html_document
+---
+
+I always load all my packages as the first chunk in every rmarkdown I make. Its nicer than having them splayed around and also if you are knitting to a html then it means you will have no package dependency problems anywhere in the document. 
+
+```{r Package Loading, include = F}
+library(tximport)
+library(DESeq2)
+library(tidyverse)
+library(tximport)
+library(ComplexHeatmap)
+library(DEGreport)
+library(limma)
+library(edgeR)
+library(pheatmap)
+```
+
+```{r Making Salmon Vectors Names ofav, include=FALSE}
+#Loading quantification data output from the slippery Salmon
+setwd("~/Desktop/SCTLD_tagseq/ofav_quant/")
+ofavall <- list.files(path = "~/Desktop/SCTLD_tagseq/ofav_quant///", full.names = F, pattern = "\\_salmon$")
+
+FILESofav <- file.path(ofavall, "quant.sf")
+
+names(FILESofav) <- ofavall
+head(FILESofav)
+all(file.exists(FILESofav))
+```
+
+```{r Making Salmon Vectors Names mcav, include=FALSE}
+#Loading quantification data output from the slippery Salmon
+setwd("~/Desktop/SCTLD_tagseq/mcav_quant/")
+mcavall <- list.files(path = "~/Desktop/SCTLD_tagseq/mcav_quant//", full.names = F, pattern = "\\_salmon$")
+
+FILESmcav <- file.path(mcavall, "quant.sf")
+
+names(FILESmcav) <- mcavall
+head(FILESmcav)
+all(file.exists(FILESmcav))
+```
+
+```{r Reading in Salmon Files ofav, include=F}
+#Importing the count data using salmon quant.sf files and the text to gene file
+setwd("~/Desktop/SCTLD_tagseq/ofav_quant//")
+txi.salmon.count_ofav <- tximport(FILESofav, type = "salmon", txOut = TRUE )
+```
+
+```{r Reading in Salmon Files mcav, include=F}
+#Importing the count data using salmon quant.sf files and the text to gene file
+setwd("~/Desktop/SCTLD_tagseq/mcav_quant//")
+txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
+```
+
+```{r writing csv for all info mcav, include = F}
+write.csv(txi.salmon.count_mcav$counts, file = "~/Desktop/SCTLD_tagseq/count_folder/mcav_counts.csv")
+write.csv(txi.salmon.count_mcav$abundance , file = "~/Desktop/SCTLD_tagseq/count_folder/mcav_abundance.csv")
+write.csv(txi.salmon.count_mcav$length, file = "~/Desktop/SCTLD_tagseq/count_folder/mcav_length.csv")
+```
+
+
+```{r writing csv for all info ofav, include = F}
+write.csv(txi.salmon.count_ofav$counts, file = "~/Desktop/SCTLD_tagseq/count_folder/ofav_counts.csv")
+write.csv(txi.salmon.count_ofav$abundance , file = "~/Desktop/SCTLD_tagseq/count_folder/ofav_abundance.csv")
+write.csv(txi.salmon.count_ofav$length, file = "~/Desktop/SCTLD_tagseq/count_folder/ofav_length.csv")
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
