@@ -55,3 +55,35 @@ txi.salmon.count_ofav <- tximport(FILESofav, type = "salmon", txOut = TRUE )
 setwd("./mcav_salmon_quant/")
 txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
 ```
+
+```{r writing csv for all info mcav, include = F}
+write.csv(txi.salmon.count_mcav$counts, file = "./mcav_counts.csv")
+write.csv(txi.salmon.count_mcav$abundance , file = "./mcav_abundance.csv")
+write.csv(txi.salmon.count_mcav$length, file = "./mcav_length.csv")
+```
+
+
+```{r writing csv for all info ofav, include = F}
+write.csv(txi.salmon.count_ofav$counts, file = "./ofav_counts.csv")
+write.csv(txi.salmon.count_ofav$abundance , file = "./ofav_abundance.csv")
+write.csv(txi.salmon.count_ofav$length, file = "./ofav_length.csv")
+```
+
+```{r}
+meta <- read.csv(file = "./metadata.csv")
+str(meta)
+```
+
+
+```{r filter mcav}
+meta %>% filter(salmon_label %in% mcavall) -> mcav_meta
+## Check our salmon and meta lengths the same
+length(mcavall)
+nrow(mcav_meta)
+```
+
+```{r filter ofav}
+meta %>% filter(salmon_label %in% ofavall) -> ofav_meta
+length(ofavall)
+nrow(ofav_meta)
+```
