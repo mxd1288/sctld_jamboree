@@ -131,12 +131,32 @@ length(ofavall)
 nrow(ofav_meta)
 ```
 
-## Making DeSeq2 Object 
+## Read in Data and Make DESeq object
+REF: http://www.nathalievialaneix.eu/doc/html/TP1_normalization.html 
+```{r}
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+#library(mixOmics)
+library(RColorBrewer)
+library(DESeq2)
+library(edgeR)
+library(VennDiagram)
+library(devtools)
+```
+Make a data frame of the counts for normalization with edgeR
+```{r}
+ofav_counts <- as.data.frame(txi.salmon.count_ofav$counts)
+mcav_counts <- as.data.frame(txi.salmon.count_mcav$counts)
+
+ofav_lengths <- as.data.frame(txi.salmon.count_ofav$length)
+mcsv_lengths <- as.data.frame(txi.salmon.count_mcav$length)
+```
 
 ```{r Making DeSeq object, include=FALSE}
 #making the dds model to use in deseq2
-dds_mcav = DESeqDataSetFromTximport(txi.salmon.count_mcav , mcav_meta, ~ Correct_treatment)
-dds_ofav = DESeqDataSetFromTximport(txi.salmon.count_ofav , ofav_meta, ~ Correct_treatment)
+dds_mcav = DESeqDataSetFromMatrix(round(mcav_counts), mcav_meta, ~ Correct_treatment)
+dds_ofav = DESeqDataSetFromMatrix(round(ofav_counts), ofav_meta, ~ Correct_treatment)
 ```
 
 ```{r}
@@ -161,32 +181,12 @@ GeneCountsOfav <- counts(dds_ofav_rmlow)
 idx.nz2 <- apply(GeneCountsOfav, 1, function(x) { all(x > 0)})
 sum(idx.nz2)
 ```
-REF: http://www.nathalievialaneix.eu/doc/html/TP1_normalization.html 
-```{r}
-library(ggplot2)
-library(gridExtra)
-library(reshape2)
-#library(mixOmics)
-library(RColorBrewer)
-library(DESeq2)
-library(edgeR)
-library(VennDiagram)
-library(devtools)
-```
-Make a data frame of the counts for normalization with edgeR
-```{r}
-ofav_counts <- as.data.frame(txi.salmon.count_ofav$counts)
-mcav_counts <- as.data.frame(txi.salmon.count_mcav$counts)
 
-ofav_lengths <- as.data.frame(txi.salmon.count_ofav$length)
-mcsv_lengths <- as.data.frame(txi.salmon.count_mcav$length)
-```
 EdgeR used TMM normalization ()
 ```{r}
 # filter out reads with count of 0
 raw_counts_ofav <- ofav_counts[rowSums(ofav_counts) > 0,]
 raw_counts_mcav <- mcav_counts[rowSums(mcav_counts) > 0, ]
-
 
 # calucluate log transformed coutns
 pseudo_counts_ofav <- log2(raw_counts_ofav + 1)
@@ -300,7 +300,7 @@ fviz_pca_ind(res.pca2, col.ind=groups, label=FALSE)
 ```
 ## Normalization ##
 ```{r}
-# Use DESeq - corrects for library size NOT gene specific
+# Use DESeq - corrects for library size NOT gene specific -- NOT GOOD FOR 3' need to read in DESeq object without length correction
 #ofav
 sizefact <- estimateSizeFactorsForMatrix(raw_counts_ofav)
 sizefact_dd <- estimateSizeFactors(dds_ofav)
@@ -588,7 +588,285 @@ ggplot(pcaData2, aes(PC1, PC2, color=Correct_treatment, shape=Project)) +
    theme_bw()
 ```
 ## Differential Expression Analysis
-Pairwise exact test
+BCV plots show biological variation. High variance (above red line) will reduce ability to detect DEG. Corrected p-values use FDR (Benjamini and Hochberg). A list of DEG's is generated using 4 different tests: pairwise exact test, GLM, GLM multivariate, and voom lm. GLM and voom are binomial estimate approaches and are more flexible for various experimental designs while the pairwise exact test is useful for one dimensional experiments. For this experiment, GLM will only tolerate up to two variables.
+
+# OFAV
+Pairwise exact test: DEG_pairwiseExact will contain list of DEG, pvals_pairwiseExact will contain list of raw and BH corrected p-vals.
+```{r}
+all_conditions <- setdiff(unique(ofav_meta$Correct_treatment), "control")
+DEG_pairwiseExact <- NULL
+pvals_pairwiseExact <- NULL
+par(mfrow = c(1,3))
+for (ind in seq_along(all_conditions)) {
+  # create dataset with 'wt' and current mutant and normalize (TMM)
+  sel_cols <- union(grep("control", colnames(raw_counts_ofav)),
+                    grep("control", colnames(raw_counts_ofav), invert=TRUE))
+  cur_counts <- raw_counts_ofav[ ,sel_cols]
+  group <- relevel(as.factor(ofav_meta$Correct_treatment[sel_cols]), ref = "control")
+  cur_dge <- DGEList(cur_counts, group = group)
+  cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+  
+  # estimate dispersions
+  cur_dge <- estimateCommonDisp(cur_dge)
+  cur_dge <- estimateTagwiseDisp(cur_dge)
+  plotBCV(cur_dge, 
+          main = paste0("BCV plot 'control' vs '", all_conditions[ind], "'"))
+  
+  # exact test
+  res_et <- exactTest(cur_dge)
+  cat("Exact test results:\n")
+  print(res_et)
+  pvals_pairwiseExact <- c(pvals_pairwiseExact, res_et$table$PValue,
+                           p.adjust(res_et$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_et))
+  
+  cur_res <- decideTestsDGE(res_et, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(cur_counts)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_pairwiseExact <- rbind(DEG_pairwiseExact, cur_res)
+}
+
+DEG_pairwiseExact <- as.data.frame(DEG_pairwiseExact)
+names(DEG_pairwiseExact) <- c("name", "UD", "condition")
+listDEG_pairwiseExact <- unique(DEG_pairwiseExact$name)
+
+pvals_pairwiseExact <- data.frame("pvalue" = pvals_pairwiseExact,
+                                  "type" = rep(rep(c("raw", "adjusted"),
+                                                   each = nrow(raw_counts_ofav)),
+                                               length(all_conditions)),
+                                  "condition" = rep(all_conditions,
+                                                    each=nrow(raw_counts_ofav)*2))
+```
+
+```{r}
+# view summary of pairwise exact results
+#num unique DEGs = 15
+table(DEG_pairwiseExact$condition)
+
+# num up and down regulated (1 = upregulated)
+table(DEG_pairwiseExact$condition, DEG_pairwiseExact$UD)
+
+# total list length
+length(listDEG_pairwiseExact)
+
+# distribution of p-vals and adjusted p-vals
+p <- ggplot(data = pvals_pairwiseExact, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histograms of raw/adjusted p-values for exact test")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+GLM with group effect (recommended rather than the exact test because it is more robust to variation in experimental design while exact test is best for one dimensional experimental designs)
+```{r}
+cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+group <- relevel(as.factor(ofav_meta$Correct_treatment), ref = "control")
+design_matrix <- model.matrix(~ group)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+plotBCV(cur_dge, main = paste0("BCV plot"))
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM1 <- NULL
+pvals_GLM1 <- NULL
+for (ind in 1) {
+  res_GLM1 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM1 <- c(pvals_GLM1, res_GLM1$table$PValue,
+                  p.adjust(res_GLM1$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM1))
+  
+  cur_res <- decideTestsDGE(res_GLM1, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_ofav)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM1 <- rbind(DEG_GLM1, cur_res)
+}
+
+DEG_GLM1 <- as.data.frame(DEG_GLM1)
+names(DEG_GLM1) <- c("name", "UD", "condition")
+listDEG_GLM1 <- unique(DEG_GLM1$name)
+
+pvals_GLM1 <- data.frame("pvalue" = pvals_GLM1,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_ofav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_ofav)*2))
+```
+
+```{r}
+# view summary of GLM results
+#num unique DEGs = 7 
+table(DEG_GLM1$condition)
+
+# num up and down regulated (1 = upregulated)
+table(DEG_GLM1$condition, DEG_GLM1$UD)
+
+# total list length
+length(listDEG_GLM1)
+
+# visualize distribution of p-vals and corrected p-vals
+p <- ggplot(data = pvals_GLM1, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+GLM with effects of treatment and project
+```{r}
+# create dataset with 'wt' and current mutant and normalize (TMM)
+cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+# create design matrix
+design_matrix <- model.matrix(~ ofav_meta$Project + ofav_meta$Correct_treatment)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+plotBCV(cur_dge, main = paste0("BCV plot"))
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM2 <- NULL
+pvals_GLM2 <- NULL
+for (ind in 1) {
+  res_GLM2 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM2 <- c(pvals_GLM2, res_GLM2$table$PValue,
+                  p.adjust(res_GLM2$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM2))
+  
+  cur_res <- decideTestsDGE(res_GLM2, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_ofav)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
+}
+
+DEG_GLM2 <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2) <- c("name", "UD", "condition")
+listDEG_GLM2 <- unique(DEG_GLM2$name)
+
+pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_ofav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_ofav)*2))
+```
+
+```{r}
+# number of DEGs = 1626 !!!! DUE TO INCLUSION OF PROJECT !!!
+table(DEG_GLM2$condition)
+
+table(DEG_GLM2$condition, DEG_GLM2$UD)
+
+length(listDEG_GLM2)
+
+p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+
+Voom and LM test
+```{r}
+cur_dge <- DGEList(raw_counts_ofav)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+vdge <- voom(cur_dge, design_matrix, plot = TRUE)
+
+# LM fit
+fit <- lmFit(vdge, design_matrix)
+fit <- eBayes(fit)
+cur_gres <- decideTests(fit, adjust.method = "BH", p.value = 0.05)
+head(cur_gres)
+
+DEG_voom <- NULL
+pvals_voom <- NULL
+for (ind in 1) {
+  res_voom <- fit$p.value
+  pvals_voom <- c(pvals_voom, res_voom[ ,ind+1],
+                  p.adjust(res_voom[ ,ind+1], method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTable(fit, coef = ind+1))
+  
+  sel_deg <- which(cur_gres[ ,ind+1] != 0)
+  cur_res <- cbind(rownames(raw_counts_ofav)[sel_deg], 
+                   cur_gres[sel_deg,ind+1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_voom <- rbind(DEG_voom, cur_res)
+}
+
+DEG_voom <- as.data.frame(DEG_voom)
+names(DEG_voom) <- c("name", "UD", "condition")
+listDEG_voom <- unique(DEG_voom$name)
+
+pvals_voom <- data.frame("pvalue" = pvals_voom,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_ofav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_ofav)*2))
+```
+
+```{r}
+# number of DEGs = 585
+table(DEG_voom$condition)
+
+table(DEG_voom$condition, DEG_voom$UD)
+
+length(listDEG_voom)
+
+p <- ggplot(data = pvals_voom, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for voom")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+
+Overlapping Results -- Venn Diagram -- MCAV
+```{r}
+vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact,
+                          "GLM\n treatment" = listDEG_GLM1, 
+                          "GLM\n treatment + project" = listDEG_GLM2,
+                          "voom" = listDEG_voom), 
+                   fill = brewer.pal(4, "Set3"), 
+                   cat.col = c("darkgreen", "black", "darkblue", "darkred"),
+                   cat.cex = 1.5, fontface="bold", filename="venn_DEG_ofav.tiff")
+```
+# MCAV
+
+Pairwise exact test: DEG_pairwiseExact will contain list of DEG, pvals_pairwiseExact will contain list of raw and BH corrected p-vals.
 ```{r}
 all_conditions <- setdiff(unique(mcav_meta$Correct_treatment), "control")
 DEG_pairwiseExact <- NULL
@@ -597,7 +875,7 @@ par(mfrow = c(1,3))
 for (ind in seq_along(all_conditions)) {
   # create dataset with 'wt' and current mutant and normalize (TMM)
   sel_cols <- union(grep("control", colnames(raw_counts_mcav)),
-                    grep(all_conditions[ind], colnames(raw_counts_mcav)))
+                    grep("control", colnames(raw_counts_mcav), invert=TRUE))
   cur_counts <- raw_counts_mcav[ ,sel_cols]
   group <- relevel(as.factor(mcav_meta$Correct_treatment[sel_cols]), ref = "control")
   cur_dge <- DGEList(cur_counts, group = group)
@@ -633,15 +911,15 @@ listDEG_pairwiseExact <- unique(DEG_pairwiseExact$name)
 
 pvals_pairwiseExact <- data.frame("pvalue" = pvals_pairwiseExact,
                                   "type" = rep(rep(c("raw", "adjusted"),
-                                                   each = nrow(raw_counts_wn)),
+                                                   each = nrow(raw_counts_mcav)),
                                                length(all_conditions)),
                                   "condition" = rep(all_conditions,
-                                                    each=nrow(raw_counts_wn)*2))
+                                                    each=nrow(raw_counts_mcav)*2))
 ```
 
 ```{r}
 # view summary of pairwise exact results
-#num unique DEGs
+#num unique DEGs = 88
 table(DEG_pairwiseExact$condition)
 
 # num up and down regulated (1 = upregulated)
@@ -655,6 +933,339 @@ p <- ggplot(data = pvals_pairwiseExact, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histograms of raw/adjusted p-values for exact test")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+GLM with group effect (recommended rather than the exact test because it is more robust to variation in experimental design while exact test is best for one dimensional experimental designs)
+```{r}
+cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+group <- relevel(as.factor(mcav_meta$Correct_treatment), ref = "control")
+design_matrix <- model.matrix(~ group)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+plotBCV(cur_dge, main = paste0("BCV plot"))
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM1 <- NULL
+pvals_GLM1 <- NULL
+for (ind in 1) {
+  res_GLM1 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM1 <- c(pvals_GLM1, res_GLM1$table$PValue,
+                  p.adjust(res_GLM1$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM1))
+  
+  cur_res <- decideTestsDGE(res_GLM1, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_mcav)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM1 <- rbind(DEG_GLM1, cur_res)
+}
+
+DEG_GLM1 <- as.data.frame(DEG_GLM1)
+names(DEG_GLM1) <- c("name", "UD", "condition")
+listDEG_GLM1 <- unique(DEG_GLM1$name)
+
+pvals_GLM1 <- data.frame("pvalue" = pvals_GLM1,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_mcav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_mcav)*2))
+```
+
+```{r}
+# view summary of GLM results
+#num unique DEGs = 57
+table(DEG_GLM1$condition)
+
+# num up and down regulated (1 = upregulated)
+table(DEG_GLM1$condition, DEG_GLM1$UD)
+
+# total list length
+length(listDEG_GLM1)
+
+# visualize distribution of p-vals and corrected p-vals
+p <- ggplot(data = pvals_GLM1, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+GLM with effects of treatment and project
+```{r}
+# create dataset with 'wt' and current mutant and normalize (TMM)
+cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+# create design matrix
+design_matrix <- model.matrix(~ mcav_meta$Project + mcav_meta$Correct_treatment)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+plotBCV(cur_dge, main = paste0("BCV plot"))
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM2 <- NULL
+pvals_GLM2 <- NULL
+for (ind in 1) {
+  res_GLM2 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM2 <- c(pvals_GLM2, res_GLM2$table$PValue,
+                  p.adjust(res_GLM2$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM2))
+  
+  cur_res <- decideTestsDGE(res_GLM2, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_mcav)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
+}
+
+DEG_GLM2 <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2) <- c("name", "UD", "condition")
+listDEG_GLM2 <- unique(DEG_GLM2$name)
+
+pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_mcav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_mcav)*2))
+```
+
+```{r}
+# number of DEGs = 7
+table(DEG_GLM2$condition)
+
+table(DEG_GLM2$condition, DEG_GLM2$UD)
+
+length(listDEG_GLM2)
+
+p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+
+Voom and LM test
+```{r}
+cur_dge <- DGEList(raw_counts_mcav)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+vdge <- voom(cur_dge, design_matrix, plot = TRUE)
+
+# LM fit
+fit <- lmFit(vdge, design_matrix)
+fit <- eBayes(fit)
+cur_gres <- decideTests(fit, adjust.method = "BH", p.value = 0.05)
+head(cur_gres)
+
+DEG_voom <- NULL
+pvals_voom <- NULL
+for (ind in 1) {
+  res_voom <- fit$p.value
+  pvals_voom <- c(pvals_voom, res_voom[ ,ind+1],
+                  p.adjust(res_voom[ ,ind+1], method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTable(fit, coef = ind+1))
+  
+  sel_deg <- which(cur_gres[ ,ind+1] != 0)
+  cur_res <- cbind(rownames(raw_counts_mcav)[sel_deg], 
+                   cur_gres[sel_deg,ind+1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_voom <- rbind(DEG_voom, cur_res)
+}
+
+DEG_voom <- as.data.frame(DEG_voom)
+names(DEG_voom) <- c("name", "UD", "condition")
+listDEG_voom <- unique(DEG_voom$name)
+
+pvals_voom <- data.frame("pvalue" = pvals_voom,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_mcav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_mcav)*2))
+```
+
+```{r}
+# number of DEGs = 6
+table(DEG_voom$condition)
+
+table(DEG_voom$condition, DEG_voom$UD)
+
+length(listDEG_voom)
+
+p <- ggplot(data = pvals_voom, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for voom")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+
+Overlapping Results -- Venn Diagram -- MCAV
+```{r}
+vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact,
+                          "GLM\n treatment" = listDEG_GLM1, 
+                          "GLM\n treatment + project" = listDEG_GLM2,
+                          "voom" = listDEG_voom), 
+                   fill = brewer.pal(4, "Set3"), 
+                   cat.col = c("darkgreen", "black", "darkblue", "darkred"),
+                   cat.cex = 1.5, fontface="bold", filename="venn_DEG_mcav.tiff")
+```
+
+# Genotype investigation
+Above the multivariate GLM used Project and Treatment, below is a new GLM using Experimental Genotype and Treatment.
+Results: 26 significant genes for Ofav, 20 for Mcav
+For Ofav
+```{r}
+# create dataset with 'wt' and current mutant and normalize (TMM)
+cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+# create design matrix
+design_matrix <- model.matrix(~ ofav_meta$Exp_frag_genet + ofav_meta$Correct_treatment)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+plotBCV(cur_dge, main = paste0("BCV plot"))
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM2 <- NULL
+pvals_GLM2 <- NULL
+for (ind in 1) {
+  res_GLM2 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM2 <- c(pvals_GLM2, res_GLM2$table$PValue,
+                  p.adjust(res_GLM2$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM2))
+  
+  cur_res <- decideTestsDGE(res_GLM2, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_ofav)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
+}
+
+DEG_GLM2 <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2) <- c("name", "UD", "condition")
+listDEG_GLM2 <- unique(DEG_GLM2$name)
+
+pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_ofav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_ofav)*2))
+```
+```{r}
+# number of DEGs = 26 !! DUE TO INCLUSION OF GENOTYPE !!!
+table(DEG_GLM2$condition)
+
+table(DEG_GLM2$condition, DEG_GLM2$UD)
+
+length(listDEG_GLM2)
+
+p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
+
+For Mcav
+```{r}
+# create dataset with 'wt' and current mutant and normalize (TMM)
+cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+# create design matrix
+design_matrix <- model.matrix(~ mcav_meta$Exp_frag_genet + mcav_meta$Correct_treatment)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+plotBCV(cur_dge, main = paste0("BCV plot"))
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM2 <- NULL
+pvals_GLM2 <- NULL
+for (ind in 1) {
+  res_GLM2 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM2 <- c(pvals_GLM2, res_GLM2$table$PValue,
+                  p.adjust(res_GLM2$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM2))
+  
+  cur_res <- decideTestsDGE(res_GLM2, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_mcav)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
+}
+
+DEG_GLM2 <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2) <- c("name", "UD", "condition")
+listDEG_GLM2 <- unique(DEG_GLM2$name)
+
+pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_mcav)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_mcav)*2))
+```
+
+```{r}
+# number of DEGs = 20 !! DUE TO INCLUSION OF GENOTYPE !!!
+table(DEG_GLM2$condition)
+
+table(DEG_GLM2$condition, DEG_GLM2$UD)
+
+length(listDEG_GLM2)
+
+p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
 p <- p + facet_grid(type ~ condition) 
 p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
                axis.ticks.x = element_blank())

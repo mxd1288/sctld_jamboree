@@ -1,0 +1,19 @@
+INFO [2020-11-17 15:36:21] $x
+INFO [2020-11-17 15:36:21] list(`Exact test` = listDEG_pairwiseExact, `GLM\n treatment` = listDEG_GLM1, 
+INFO [2020-11-17 15:36:21]     `GLM\n treatment + project` = listDEG_GLM2, voom = listDEG_voom)
+INFO [2020-11-17 15:36:21] 
+INFO [2020-11-17 15:36:21] $fill
+INFO [2020-11-17 15:36:21] brewer.pal(4, "Set3")
+INFO [2020-11-17 15:36:21] 
+INFO [2020-11-17 15:36:21] $cat.col
+INFO [2020-11-17 15:36:21] c("darkgreen", "black", "darkblue", "darkred")
+INFO [2020-11-17 15:36:21] 
+INFO [2020-11-17 15:36:21] $cat.cex
+INFO [2020-11-17 15:36:21] [1] 1.5
+INFO [2020-11-17 15:36:21] 
+INFO [2020-11-17 15:36:21] $fontface
+INFO [2020-11-17 15:36:21] [1] "bold"
+INFO [2020-11-17 15:36:21] 
+INFO [2020-11-17 15:36:21] $filename
+INFO [2020-11-17 15:36:21] [1] "venn_DEG_ofav.tiff"
+INFO [2020-11-17 15:36:21] 
