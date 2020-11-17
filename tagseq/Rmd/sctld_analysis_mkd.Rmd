@@ -550,11 +550,11 @@ fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
 ```
 Try PCA with DESeq2 -- takes top ~500 rows
 ```{r}
-vsd <- vst(dds, blind=FALSE)
-plotPCA(vsd, intgroup=c("condition", "type"))
+vsd <- vst(dds_ofav, blind=FALSE)
+plotPCA(vsd, intgroup="Correct_treatment")
 
-vsd <- vst(dds, blind=FALSE)
-plotPCA(vsd, intgroup=c("condition", "type"))
+vsd2 <- vst(dds_mcav, blind=FALSE)
+plotPCA(vsd2, intgroup="Correct_treatment")
 ```
 
 
