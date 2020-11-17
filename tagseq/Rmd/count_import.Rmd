@@ -18,6 +18,7 @@ library(pheatmap)
 Set the markdown working directory as the tagseq data file from the pulled github on your desktop
 
 ```{r setup, include=FALSE, echo=FALSE}
+getwd() #### remove the Rmd in this path as we want the tagseq folder as the root directory, see below
 require("knitr")
 opts_knit$set(root.dir = "~/Desktop/SCTLD_jamboree/sctld_jamboree/tagseq/")
 ```
