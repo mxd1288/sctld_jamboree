@@ -1,0 +1,57 @@
+---
+title: "importing"
+output: html_document
+---
+
+```{r Package Loading, include = F}
+library(tximport)
+library(DESeq2)
+library(tidyverse)
+library(tximport)
+library(ComplexHeatmap)
+library(DEGreport)
+library(limma)
+library(edgeR)
+library(pheatmap)
+```
+
+```{r setup, include=FALSE, echo=FALSE}
+require("knitr")
+opts_knit$set(root.dir = "~/Desktop/SCTLD_jamboree/sctld_jamboree/tagseq/data")
+```
+
+```{r Making Salmon Vectors Names ofav, include=FALSE}
+#Loading quantification data output from the slippery Salmon
+setwd("./ofav_salmon_quant/")
+ofavall <- list.files(path = ".", full.names = F, pattern = "\\_salmon$")
+
+FILESofav <- file.path(ofavall, "quant.sf")
+
+names(FILESofav) <- ofavall
+head(FILESofav)
+all(file.exists(FILESofav))
+```
+
+```{r Making Salmon Vectors Names mcav, include=FALSE}
+#Loading quantification data output from the slippery Salmon
+setwd("./mcav_salmon_quant/")
+mcavall <- list.files(path = ".", full.names = F, pattern = "\\_salmon$")
+
+FILESmcav <- file.path(mcavall, "quant.sf")
+
+names(FILESmcav) <- mcavall
+head(FILESmcav)
+all(file.exists(FILESmcav))
+```
+
+```{r Reading in Salmon Files ofav, include=F}
+#Importing the count data using salmon quant.sf files and the text to gene file
+setwd("./ofav_salmon_quant/")
+txi.salmon.count_ofav <- tximport(FILESofav, type = "salmon", txOut = TRUE )
+```
+
+```{r Reading in Salmon Files mcav, include=F}
+#Importing the count data using salmon quant.sf files and the text to gene file
+setwd("./mcav_salmon_quant/")
+txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
+```
