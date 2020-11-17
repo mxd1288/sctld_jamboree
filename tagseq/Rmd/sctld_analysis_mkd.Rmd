@@ -503,58 +503,93 @@ p2 <- p2 + theme(title = element_text(size=10), axis.text.x = element_blank(),
                axis.ticks.x = element_blank())
 print(p2)
 ```
-Repeat PCA with normalized TMM data
+# Repeat PCA with normalized TMM data
+
+The red dashed line on the graph of PC variance explained bars indicates the expected average contribution. If the contribution of the variables were uniform, the expected value would be 1/length(variables) = 1/10 = 10%. For a given component, a variable with a contribution larger than this cutoff could be considered as important in contributing to the component.
 ```{r}
 #ofav
 res.pca <- prcomp(t(pseudo_RPKM), scale = TRUE)
 fviz_eig(res.pca)
+fviz_pca_var(res.pca2, select.var = list(contrib = 10))
 groups <- as.factor(ofav_meta$Correct_treatment)
-fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
+fviz_pca_ind(res.pca, habillage = ofav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
+
+# Contributions of variables to PC1
+fviz_contrib(res.pca, choice = "var", axes = 1, top = 10)
+# Contributions of variables to PC2
+fviz_contrib(res.pca, choice = "var", axes = 2, top = 10)
 
 res.pca <- prcomp(t(pseudo_TMM), scale = TRUE)
 fviz_eig(res.pca)
+fviz_pca_var(res.pca, select.var = list(contrib = 3))
 groups <- as.factor(ofav_meta$Correct_treatment)
-fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
-
+fviz_pca_ind(res.pca, habillage = ofav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
 
 groups <- as.factor(ofav_meta$Project)
-fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
-
+fviz_pca_ind(res.pca, habillage = ofav_meta$Project, addEllipses=TRUE, label=FALSE)
 
 groups <- as.factor(ofav_meta$Exp_frag_genet)
-fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
+fviz_pca_ind(res.pca, habillage = ofav_meta$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
 ```
-
+The red dashed line on the graph of PC variance explained bars indicates the expected average contribution. If the contribution of the variables were uniform, the expected value would be 1/length(variables) = 1/10 = 10%. For a given component, a variable with a contribution larger than this cutoff could be considered as important in contributing to the component.
 ```{r}
 #mcav
-res.pca2 <- prcomp(t(pseudo_RPKM2), scale = TRUE)
+res.pca2 <- prcomp(t(pseudo_RPKM2), scale = FALSE)
 fviz_eig(res.pca2)
+fviz_pca_var(res.pca2, select.var = list(contrib = 10))
 groups <- as.factor(mcav_meta$Correct_treatment)
-fviz_pca_ind(res.pca2, col.ind=groups, label=FALSE)
+fviz_pca_ind(res.pca2, habillage = mcav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
+
+# Contributions of variables to PC1
+fviz_contrib(res.pca2, choice = "var", axes = 1, top = 10)
+# Contributions of variables to PC2
+fviz_contrib(res.pca2, choice = "var", axes = 2, top = 10)
 
 #pc4 is ok
 res.pca2 <- prcomp(t(pseudo_TMM2), scale = TRUE)
 fviz_eig(res.pca2)
+fviz_pca_var(res.pca2, select.var = list(contrib = 3))
 groups <- as.factor(mcav_meta$Correct_treatment)
-fviz_pca_ind(res.pca2, col.ind=groups, label=FALSE)
+fviz_pca_ind(res.pca2, habillage = mcav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
 
-res.pca2 <- prcomp(t(pseudo_TMM2), scale = TRUE)
-fviz_eig(res.pca2)
 groups <- as.factor(mcav_meta$Project)
-fviz_pca_ind(res.pca2, col.ind=groups, label=FALSE)
+fviz_pca_ind(res.pca2, habillage = mcav_meta$Project, addEllipses=TRUE, label=FALSE)
 
-res.pca <- prcomp(t(pseudo_TMM2), scale = TRUE)
-fviz_eig(res.pca)
 groups <- as.factor(mcav_meta$Exp_frag_genet)
-fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
+fviz_pca_ind(res.pca2, habillage = mcav_meta$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
 ```
 Try PCA with DESeq2 -- takes top ~500 rows
 ```{r}
 vsd <- vst(dds_ofav, blind=FALSE)
-plotPCA(vsd, intgroup="Correct_treatment")
+plotPCA(vsd, intgroup=c("Correct_treatment", "Project"))
 
 vsd2 <- vst(dds_mcav, blind=FALSE)
-plotPCA(vsd2, intgroup="Correct_treatment")
+plotPCA(vsd2, intgroup=c("Correct_treatment","Project"))
+
+# make it pretty
+pcaData <- plotPCA(vsd, intgroup=c("Correct_treatment","Project"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+ggplot(pcaData, aes(PC1, PC2, color=Correct_treatment, shape=Project)) +
+   stat_ellipse() +
+  geom_point(size=3) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
+  coord_fixed()+
+   theme_bw()
+
+pcaData2 <- plotPCA(vsd2, intgroup=c("Correct_treatment","Project"), returnData=TRUE)
+percentVar <- round(100 * attr(pcaData, "percentVar"))
+ggplot(pcaData2, aes(PC1, PC2, color=Correct_treatment, shape=Project)) +
+   stat_ellipse()+
+  geom_point(size=3) +
+  xlab(paste0("PC1: ",percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ",percentVar[2],"% variance")) + 
+  coord_fixed() +
+   theme_bw()
+```
+## Differential Expression Analysis
+```{r}
+
 ```
 
 
