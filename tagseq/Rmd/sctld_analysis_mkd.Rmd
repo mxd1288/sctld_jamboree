@@ -588,8 +588,76 @@ ggplot(pcaData2, aes(PC1, PC2, color=Correct_treatment, shape=Project)) +
    theme_bw()
 ```
 ## Differential Expression Analysis
+Pairwise exact test
 ```{r}
+all_conditions <- setdiff(unique(mcav_meta$Correct_treatment), "control")
+DEG_pairwiseExact <- NULL
+pvals_pairwiseExact <- NULL
+par(mfrow = c(1,3))
+for (ind in seq_along(all_conditions)) {
+  # create dataset with 'wt' and current mutant and normalize (TMM)
+  sel_cols <- union(grep("control", colnames(raw_counts_mcav)),
+                    grep(all_conditions[ind], colnames(raw_counts_mcav)))
+  cur_counts <- raw_counts_mcav[ ,sel_cols]
+  group <- relevel(as.factor(mcav_meta$Correct_treatment[sel_cols]), ref = "control")
+  cur_dge <- DGEList(cur_counts, group = group)
+  cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+  
+  # estimate dispersions
+  cur_dge <- estimateCommonDisp(cur_dge)
+  cur_dge <- estimateTagwiseDisp(cur_dge)
+  plotBCV(cur_dge, 
+          main = paste0("BCV plot 'control' vs '", all_conditions[ind], "'"))
+  
+  # exact test
+  res_et <- exactTest(cur_dge)
+  cat("Exact test results:\n")
+  print(res_et)
+  pvals_pairwiseExact <- c(pvals_pairwiseExact, res_et$table$PValue,
+                           p.adjust(res_et$table$PValue, method = "BH"))
 
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_et))
+  
+  cur_res <- decideTestsDGE(res_et, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(cur_counts)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_pairwiseExact <- rbind(DEG_pairwiseExact, cur_res)
+}
+
+DEG_pairwiseExact <- as.data.frame(DEG_pairwiseExact)
+names(DEG_pairwiseExact) <- c("name", "UD", "condition")
+listDEG_pairwiseExact <- unique(DEG_pairwiseExact$name)
+
+pvals_pairwiseExact <- data.frame("pvalue" = pvals_pairwiseExact,
+                                  "type" = rep(rep(c("raw", "adjusted"),
+                                                   each = nrow(raw_counts_wn)),
+                                               length(all_conditions)),
+                                  "condition" = rep(all_conditions,
+                                                    each=nrow(raw_counts_wn)*2))
 ```
 
+```{r}
+# view summary of pairwise exact results
+#num unique DEGs
+table(DEG_pairwiseExact$condition)
+
+# num up and down regulated (1 = upregulated)
+table(DEG_pairwiseExact$condition, DEG_pairwiseExact$UD)
+
+# total list length
+length(listDEG_pairwiseExact)
+
+# distribution of p-vals and adjusted p-vals
+p <- ggplot(data = pvals_pairwiseExact, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histograms of raw/adjusted p-values for exact test")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+```
 
