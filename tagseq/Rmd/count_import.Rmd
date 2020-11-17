@@ -15,14 +15,16 @@ library(edgeR)
 library(pheatmap)
 ```
 
+Set the markdown working directory as the tagseq data file from the pulled github on your desktop
+
 ```{r setup, include=FALSE, echo=FALSE}
 require("knitr")
-opts_knit$set(root.dir = "~/Desktop/SCTLD_jamboree/sctld_jamboree/tagseq/data")
+opts_knit$set(root.dir = "~/Desktop/SCTLD_jamboree/sctld_jamboree/tagseq/")
 ```
 
 ```{r Making Salmon Vectors Names ofav, include=FALSE}
 #Loading quantification data output from the slippery Salmon
-setwd("./ofav_salmon_quant/")
+setwd("./data/ofav_salmon_quant/")
 ofavall <- list.files(path = ".", full.names = F, pattern = "\\_salmon$")
 
 FILESofav <- file.path(ofavall, "quant.sf")
@@ -34,7 +36,7 @@ all(file.exists(FILESofav))
 
 ```{r Making Salmon Vectors Names mcav, include=FALSE}
 #Loading quantification data output from the slippery Salmon
-setwd("./mcav_salmon_quant/")
+setwd("./data/mcav_salmon_quant/")
 mcavall <- list.files(path = ".", full.names = F, pattern = "\\_salmon$")
 
 FILESmcav <- file.path(mcavall, "quant.sf")
@@ -46,31 +48,31 @@ all(file.exists(FILESmcav))
 
 ```{r Reading in Salmon Files ofav, include=F}
 #Importing the count data using salmon quant.sf files and the text to gene file
-setwd("./ofav_salmon_quant/")
+setwd("./data/ofav_salmon_quant/")
 txi.salmon.count_ofav <- tximport(FILESofav, type = "salmon", txOut = TRUE )
 ```
 
 ```{r Reading in Salmon Files mcav, include=F}
 #Importing the count data using salmon quant.sf files and the text to gene file
-setwd("./mcav_salmon_quant/")
+setwd("./data/mcav_salmon_quant/")
 txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
 ```
 
 ```{r writing csv for all info mcav, include = F}
-write.csv(txi.salmon.count_mcav$counts, file = "./mcav_counts.csv")
-write.csv(txi.salmon.count_mcav$abundance , file = "./mcav_abundance.csv")
+write.csv(txi.salmon.count_mcav$counts, file = "./data/mcav_counts.csv")
+write.csv(txi.salmon.count_mcav$abundance , file = "./data/mcav_abundance.csv")
 write.csv(txi.salmon.count_mcav$length, file = "./mcav_length.csv")
 ```
 
 
 ```{r writing csv for all info ofav, include = F}
-write.csv(txi.salmon.count_ofav$counts, file = "./ofav_counts.csv")
-write.csv(txi.salmon.count_ofav$abundance , file = "./ofav_abundance.csv")
-write.csv(txi.salmon.count_ofav$length, file = "./ofav_length.csv")
+write.csv(txi.salmon.count_ofav$counts, file = "./data/ofav_counts.csv")
+write.csv(txi.salmon.count_ofav$abundance , file = "./data/ofav_abundance.csv")
+write.csv(txi.salmon.count_ofav$length, file = "./data/ofav_length.csv")
 ```
 
 ```{r}
-meta <- read.csv(file = "./metadata.csv")
+meta <- read.csv(file = "./data/metadata.csv")
 str(meta)
 ```
 
