@@ -630,11 +630,11 @@ for (ind in seq_along(all_conditions)) {
   DEG_pairwiseExact <- rbind(DEG_pairwiseExact, cur_res)
 }
 
-DEG_pairwiseExact <- as.data.frame(DEG_pairwiseExact)
-names(DEG_pairwiseExact) <- c("name", "UD", "condition")
-listDEG_pairwiseExact <- unique(DEG_pairwiseExact$name)
+DEG_pairwiseExact_ofav <- as.data.frame(DEG_pairwiseExact)
+names(DEG_pairwiseExact_ofav) <- c("name", "UD", "condition")
+listDEG_pairwiseExact_ofav <- unique(DEG_pairwiseExact_ofav$name)
 
-pvals_pairwiseExact <- data.frame("pvalue" = pvals_pairwiseExact,
+pvals_pairwiseExact_ofav <- data.frame("pvalue" = pvals_pairwiseExact,
                                   "type" = rep(rep(c("raw", "adjusted"),
                                                    each = nrow(raw_counts_ofav)),
                                                length(all_conditions)),
@@ -645,16 +645,16 @@ pvals_pairwiseExact <- data.frame("pvalue" = pvals_pairwiseExact,
 ```{r}
 # view summary of pairwise exact results
 #num unique DEGs = 15
-table(DEG_pairwiseExact$condition)
+table(DEG_pairwiseExact_ofav$condition)
 
 # num up and down regulated (1 = upregulated)
-table(DEG_pairwiseExact$condition, DEG_pairwiseExact$UD)
+table(DEG_pairwiseExact_ofav$condition, DEG_pairwiseExact_ofav$UD)
 
 # total list length
-length(listDEG_pairwiseExact)
+length(listDEG_pairwiseExact_ofav)
 
 # distribution of p-vals and adjusted p-vals
-p <- ggplot(data = pvals_pairwiseExact, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_pairwiseExact_ofav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histograms of raw/adjusted p-values for exact test")
@@ -697,11 +697,11 @@ for (ind in 1) {
   DEG_GLM1 <- rbind(DEG_GLM1, cur_res)
 }
 
-DEG_GLM1 <- as.data.frame(DEG_GLM1)
-names(DEG_GLM1) <- c("name", "UD", "condition")
-listDEG_GLM1 <- unique(DEG_GLM1$name)
+DEG_GLM1_ofav <- as.data.frame(DEG_GLM1)
+names(DEG_GLM1_ofav) <- c("name", "UD", "condition")
+listDEG_GLM1_ofav <- unique(DEG_GLM1_ofav$name)
 
-pvals_GLM1 <- data.frame("pvalue" = pvals_GLM1,
+pvals_GLM1_ofav <- data.frame("pvalue" = pvals_GLM1,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_ofav)),
                                       length(all_conditions)),
@@ -712,16 +712,16 @@ pvals_GLM1 <- data.frame("pvalue" = pvals_GLM1,
 ```{r}
 # view summary of GLM results
 #num unique DEGs = 7 
-table(DEG_GLM1$condition)
+table(DEG_GLM1_ofav$condition)
 
 # num up and down regulated (1 = upregulated)
-table(DEG_GLM1$condition, DEG_GLM1$UD)
+table(DEG_GLM1_ofav$condition, DEG_GLM1_ofav$UD)
 
 # total list length
-length(listDEG_GLM1)
+length(listDEG_GLM1_ofav)
 
 # visualize distribution of p-vals and corrected p-vals
-p <- ggplot(data = pvals_GLM1, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_GLM1_ofav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM")
@@ -765,11 +765,11 @@ for (ind in 1) {
   DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
 }
 
-DEG_GLM2 <- as.data.frame(DEG_GLM2)
-names(DEG_GLM2) <- c("name", "UD", "condition")
-listDEG_GLM2 <- unique(DEG_GLM2$name)
+DEG_GLM2_ofav <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2_ofav) <- c("name", "UD", "condition")
+listDEG_GLM2_ofav <- unique(DEG_GLM2_ofav$name)
 
-pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+pvals_GLM2_ofav <- data.frame("pvalue" = pvals_GLM2,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_ofav)),
                                       length(all_conditions)),
@@ -779,13 +779,13 @@ pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
 
 ```{r}
 # number of DEGs = 1626 !!!! DUE TO INCLUSION OF PROJECT !!!
-table(DEG_GLM2$condition)
+table(DEG_GLM2_ofav$condition)
 
-table(DEG_GLM2$condition, DEG_GLM2$UD)
+table(DEG_GLM2_ofav$condition, DEG_GLM2_ofav$UD)
 
-length(listDEG_GLM2)
+length(listDEG_GLM2_ofav)
 
-p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_GLM2_ofav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
@@ -824,11 +824,11 @@ for (ind in 1) {
   DEG_voom <- rbind(DEG_voom, cur_res)
 }
 
-DEG_voom <- as.data.frame(DEG_voom)
-names(DEG_voom) <- c("name", "UD", "condition")
-listDEG_voom <- unique(DEG_voom$name)
+DEG_voom_ofav <- as.data.frame(DEG_voom)
+names(DEG_voom_ofav) <- c("name", "UD", "condition")
+listDEG_voom_ofav <- unique(DEG_voom_ofav$name)
 
-pvals_voom <- data.frame("pvalue" = pvals_voom,
+pvals_voom_ofav <- data.frame("pvalue" = pvals_voom,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_ofav)),
                                       length(all_conditions)),
@@ -838,13 +838,13 @@ pvals_voom <- data.frame("pvalue" = pvals_voom,
 
 ```{r}
 # number of DEGs = 585
-table(DEG_voom$condition)
+table(DEG_voom_ofav$condition)
 
-table(DEG_voom$condition, DEG_voom$UD)
+table(DEG_voom_ofav$condition, DEG_voom_ofav$UD)
 
-length(listDEG_voom)
+length(listDEG_voom_ofav)
 
-p <- ggplot(data = pvals_voom, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_voom_ofav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histogram of raw/adjusted p-values for voom")
@@ -856,10 +856,10 @@ print(p)
 
 Overlapping Results -- Venn Diagram -- MCAV
 ```{r}
-vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact,
-                          "GLM\n treatment" = listDEG_GLM1, 
-                          "GLM\n treatment + project" = listDEG_GLM2,
-                          "voom" = listDEG_voom), 
+vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_ofav,
+                          "GLM\n treatment" = listDEG_GLM1_ofav, 
+                          "GLM\n treatment + project" = listDEG_GLM2_ofav,
+                          "voom" = listDEG_voom_ofav), 
                    fill = brewer.pal(4, "Set3"), 
                    cat.col = c("darkgreen", "black", "darkblue", "darkred"),
                    cat.cex = 1.5, fontface="bold", filename="venn_DEG_ofav.tiff")
@@ -905,11 +905,11 @@ for (ind in seq_along(all_conditions)) {
   DEG_pairwiseExact <- rbind(DEG_pairwiseExact, cur_res)
 }
 
-DEG_pairwiseExact <- as.data.frame(DEG_pairwiseExact)
-names(DEG_pairwiseExact) <- c("name", "UD", "condition")
-listDEG_pairwiseExact <- unique(DEG_pairwiseExact$name)
+DEG_pairwiseExact_mcav <- as.data.frame(DEG_pairwiseExact)
+names(DEG_pairwiseExact_mcav) <- c("name", "UD", "condition")
+listDEG_pairwiseExact_mcav <- unique(DEG_pairwiseExact_mcav$name)
 
-pvals_pairwiseExact <- data.frame("pvalue" = pvals_pairwiseExact,
+pvals_pairwiseExact_mcav <- data.frame("pvalue" = pvals_pairwiseExact,
                                   "type" = rep(rep(c("raw", "adjusted"),
                                                    each = nrow(raw_counts_mcav)),
                                                length(all_conditions)),
@@ -920,16 +920,16 @@ pvals_pairwiseExact <- data.frame("pvalue" = pvals_pairwiseExact,
 ```{r}
 # view summary of pairwise exact results
 #num unique DEGs = 88
-table(DEG_pairwiseExact$condition)
+table(DEG_pairwiseExact_mcav$condition)
 
 # num up and down regulated (1 = upregulated)
-table(DEG_pairwiseExact$condition, DEG_pairwiseExact$UD)
+table(DEG_pairwiseExact_mcav$condition, DEG_pairwiseExact_mcav$UD)
 
 # total list length
-length(listDEG_pairwiseExact)
+length(listDEG_pairwiseExact_mcav)
 
 # distribution of p-vals and adjusted p-vals
-p <- ggplot(data = pvals_pairwiseExact, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_pairwiseExact_mcav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histograms of raw/adjusted p-values for exact test")
@@ -972,11 +972,11 @@ for (ind in 1) {
   DEG_GLM1 <- rbind(DEG_GLM1, cur_res)
 }
 
-DEG_GLM1 <- as.data.frame(DEG_GLM1)
-names(DEG_GLM1) <- c("name", "UD", "condition")
-listDEG_GLM1 <- unique(DEG_GLM1$name)
+DEG_GLM1_mcav <- as.data.frame(DEG_GLM1)
+names(DEG_GLM1_mcav) <- c("name", "UD", "condition")
+listDEG_GLM1_mcav <- unique(DEG_GLM1_mcav$name)
 
-pvals_GLM1 <- data.frame("pvalue" = pvals_GLM1,
+pvals_GLM1_mcav <- data.frame("pvalue" = pvals_GLM1,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_mcav)),
                                       length(all_conditions)),
@@ -987,16 +987,16 @@ pvals_GLM1 <- data.frame("pvalue" = pvals_GLM1,
 ```{r}
 # view summary of GLM results
 #num unique DEGs = 57
-table(DEG_GLM1$condition)
+table(DEG_GLM1_mcav$condition)
 
 # num up and down regulated (1 = upregulated)
-table(DEG_GLM1$condition, DEG_GLM1$UD)
+table(DEG_GLM1_mcav$condition, DEG_GLM1_mcav$UD)
 
 # total list length
-length(listDEG_GLM1)
+length(listDEG_GLM1_mcav)
 
 # visualize distribution of p-vals and corrected p-vals
-p <- ggplot(data = pvals_GLM1, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_GLM1_mcav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM")
@@ -1040,11 +1040,11 @@ for (ind in 1) {
   DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
 }
 
-DEG_GLM2 <- as.data.frame(DEG_GLM2)
-names(DEG_GLM2) <- c("name", "UD", "condition")
-listDEG_GLM2 <- unique(DEG_GLM2$name)
+DEG_GLM2_mcav <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2_mcav) <- c("name", "UD", "condition")
+listDEG_GLM2_mcav <- unique(DEG_GLM2_mcav$name)
 
-pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+pvals_GLM2_mcav <- data.frame("pvalue" = pvals_GLM2,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_mcav)),
                                       length(all_conditions)),
@@ -1054,13 +1054,13 @@ pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
 
 ```{r}
 # number of DEGs = 7
-table(DEG_GLM2$condition)
+table(DEG_GLM2_mcav$condition)
 
-table(DEG_GLM2$condition, DEG_GLM2$UD)
+table(DEG_GLM2_mcav$condition, DEG_GLM2_mcav$UD)
 
-length(listDEG_GLM2)
+length(listDEG_GLM2_mcav)
 
-p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_GLM2_mcav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
@@ -1099,11 +1099,11 @@ for (ind in 1) {
   DEG_voom <- rbind(DEG_voom, cur_res)
 }
 
-DEG_voom <- as.data.frame(DEG_voom)
-names(DEG_voom) <- c("name", "UD", "condition")
-listDEG_voom <- unique(DEG_voom$name)
+DEG_voom_mcav <- as.data.frame(DEG_voom)
+names(DEG_voom_mcav) <- c("name", "UD", "condition")
+listDEG_voom_mcav <- unique(DEG_voom_mcav$name)
 
-pvals_voom <- data.frame("pvalue" = pvals_voom,
+pvals_voom_mcav <- data.frame("pvalue" = pvals_voom,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_mcav)),
                                       length(all_conditions)),
@@ -1113,13 +1113,13 @@ pvals_voom <- data.frame("pvalue" = pvals_voom,
 
 ```{r}
 # number of DEGs = 6
-table(DEG_voom$condition)
+table(DEG_voom_mcav$condition)
 
-table(DEG_voom$condition, DEG_voom$UD)
+table(DEG_voom_mcav$condition, DEG_voom_mcav$UD)
 
-length(listDEG_voom)
+length(listDEG_voom_mcav)
 
-p <- ggplot(data = pvals_voom, aes(x = pvalue, fill = type))
+p <- ggplot(data = pvals_voom_mcav, aes(x = pvalue, fill = type))
 p <- p + geom_histogram()
 p <- p + theme_bw()
 p <- p + ggtitle("Histogram of raw/adjusted p-values for voom")
@@ -1131,26 +1131,23 @@ print(p)
 
 Overlapping Results -- Venn Diagram -- MCAV
 ```{r}
-vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact,
-                          "GLM\n treatment" = listDEG_GLM1, 
-                          "GLM\n treatment + project" = listDEG_GLM2,
-                          "voom" = listDEG_voom), 
+vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_mcav,
+                          "GLM\n treatment" = listDEG_GLM1_mcav, 
+                          "GLM\n treatment + project" = listDEG_GLM2_mcav,
+                          "voom" = listDEG_voom_mcav), 
                    fill = brewer.pal(4, "Set3"), 
                    cat.col = c("darkgreen", "black", "darkblue", "darkred"),
                    cat.cex = 1.5, fontface="bold", filename="venn_DEG_mcav.tiff")
 ```
 
-# Genotype investigation
-Above the multivariate GLM used Project and Treatment, below is a new GLM using Experimental Genotype and Treatment.
-Results: 26 significant genes for Ofav, 20 for Mcav
-For Ofav
+# Removing the effect of Project (i.e. location, mote vs. smithsonian)
 ```{r}
 # create dataset with 'wt' and current mutant and normalize (TMM)
 cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
 # create design matrix
-design_matrix <- model.matrix(~ ofav_meta$Exp_frag_genet + ofav_meta$Correct_treatment)
+design_matrix <- model.matrix(~ ofav_meta$Correct_treatment - ofav_meta$Project)
 design_matrix <- design_matrix[,1:2]
 
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
@@ -1178,43 +1175,25 @@ for (ind in 1) {
   DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
 }
 
-DEG_GLM2 <- as.data.frame(DEG_GLM2)
-names(DEG_GLM2) <- c("name", "UD", "condition")
-listDEG_GLM2 <- unique(DEG_GLM2$name)
+DEG_GLM2_noproj_ofav <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2_noproj_ofav) <- c("name", "UD", "condition")
+listDEG_GLM2_noproj_ofav <- unique(DEG_GLM2_noproj_ofav$name)
 
-pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+pvals_GLM2_noproj_ofav <- data.frame("pvalue" = pvals_GLM2,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_ofav)),
                                       length(all_conditions)),
                          "condition" = rep(all_conditions,
                                            each=nrow(raw_counts_ofav)*2))
 ```
-```{r}
-# number of DEGs = 26 !! DUE TO INCLUSION OF GENOTYPE !!!
-table(DEG_GLM2$condition)
 
-table(DEG_GLM2$condition, DEG_GLM2$UD)
-
-length(listDEG_GLM2)
-
-p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
-p <- p + geom_histogram()
-p <- p + theme_bw()
-p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
-p <- p + facet_grid(type ~ condition) 
-p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
-               axis.ticks.x = element_blank())
-print(p)
-```
-
-For Mcav
 ```{r}
 # create dataset with 'wt' and current mutant and normalize (TMM)
 cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
 # create design matrix
-design_matrix <- model.matrix(~ mcav_meta$Exp_frag_genet + mcav_meta$Correct_treatment)
+design_matrix <- model.matrix(~ mcav_meta$Correct_treatment - mcav_meta$Project)
 design_matrix <- design_matrix[,1:2]
 
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
@@ -1242,11 +1221,11 @@ for (ind in 1) {
   DEG_GLM2 <- rbind(DEG_GLM2, cur_res)
 }
 
-DEG_GLM2 <- as.data.frame(DEG_GLM2)
-names(DEG_GLM2) <- c("name", "UD", "condition")
-listDEG_GLM2 <- unique(DEG_GLM2$name)
+DEG_GLM2_noproj_mcav <- as.data.frame(DEG_GLM2)
+names(DEG_GLM2_noproj_mcav) <- c("name", "UD", "condition")
+listDEG_GLM2_noproj_mcav <- unique(DEG_GLM2_noproj_mcav$name)
 
-pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
+pvals_GLM2_noproj_mcav <- data.frame("pvalue" = pvals_GLM2,
                          "type" = rep(rep(c("raw", "adjusted"),
                                           each = nrow(raw_counts_mcav)),
                                       length(all_conditions)),
@@ -1254,21 +1233,35 @@ pvals_GLM2 <- data.frame("pvalue" = pvals_GLM2,
                                            each=nrow(raw_counts_mcav)*2))
 ```
 
+Overlapping Results -- Venn Diagram -- OFAV
 ```{r}
-# number of DEGs = 20 !! DUE TO INCLUSION OF GENOTYPE !!!
-table(DEG_GLM2$condition)
-
-table(DEG_GLM2$condition, DEG_GLM2$UD)
-
-length(listDEG_GLM2)
-
-p <- ggplot(data = pvals_GLM2, aes(x = pvalue, fill = type))
-p <- p + geom_histogram()
-p <- p + theme_bw()
-p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM multivariate")
-p <- p + facet_grid(type ~ condition) 
-p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
-               axis.ticks.x = element_blank())
-print(p)
+# make the correct DFs from code above first
+vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_ofav,
+                          "GLM\n treatment" = listDEG_GLM1_ofav, 
+                          "GLM\n treatment + project" = listDEG_GLM2_ofav,
+                          "GLM\n treatment - project" = listDEG_GLM2_noproj_ofav,
+                          "voom" = listDEG_voom_ofav), 
+                   fill = brewer.pal(5, "Set3"), 
+                   cat.col = c("darkgreen", "black", "darkblue", "darkred", "orange"),
+                   cat.cex = 1.5, fontface="bold", filename="venn_DEG_ofav2.tiff")
 ```
 
+Overlapping Results -- Venn Diagram -- MCAV
+```{r}
+# make the correct DFs from code above first
+vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_mcav,
+                          "GLM\n treatment" = listDEG_GLM1_mcav, 
+                          "GLM\n treatment + project" = listDEG_GLM2_mcav,
+                          "GLM\n treatment - project" = listDEG_GLM2_noproj_mcav,
+                          "voom" = listDEG_voom_mcav), 
+                   fill = brewer.pal(5, "Set3"), 
+                   cat.col = c("darkgreen", "black", "darkblue", "darkred", "orange"),
+                   cat.cex = 1.5, fontface="bold", filename="venn_DEG_mcav2.tiff")
+```
+
+# Cleaning up the Ofav
+variance may be due to some unknown factor -- maybe able to remove with SVA ()
+```{r}
+BiocManager::install("sva")
+library(sva)
+```
