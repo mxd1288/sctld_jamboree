@@ -146,17 +146,42 @@ library(devtools)
 ```
 Make a data frame of the counts for normalization with edgeR
 ```{r}
-ofav_counts <- as.data.frame(txi.salmon.count_ofav$counts)
+#ofav_counts <- as.data.frame(txi.salmon.count_ofav$counts)
 mcav_counts <- as.data.frame(txi.salmon.count_mcav$counts)
 
-ofav_lengths <- as.data.frame(txi.salmon.count_ofav$length)
+#ofav_lengths <- as.data.frame(txi.salmon.count_ofav$length)
 mcsv_lengths <- as.data.frame(txi.salmon.count_mcav$length)
 ```
+
+```{r}
+#setwd("~/Desktop")
+#ofav_deunique <- read.csv("ofav_counts_deunique.csv")
+#ofav_counts <- read.csv("ofav_counts_only_deunique.csv")
+#ofav_lengths <- ofav_deunique$Length
+```
+
+```{r}
+setwd("~/Desktop")
+countdata <- read.delim("ofav_gene.counts.deuniqued", comment.char="#")
+```
+```{r}
+ofav_lengths <- as.data.frame(countdata$Length)
+
+# Set Gene ID's as row names
+row.names(countdata) <- countdata$Geneid
+# Remove first six columns (Geneid, chr, start, end, strand, length)
+countdata <- countdata[ ,7:ncol(countdata)]
+countdata <- countdata[ ,-4]
+
+ofav_counts <- countdata
+ofav_meta_dd <- ofav_meta[grep("K53|K54|K55|K57|K58|K59|K60|K61|K62|K63|K65|K66|K68|K69|K70|K71|K72|K73|K74|K75|K76|K78|K79|K80|K81|K82", ofav_meta$Working.Label), ]
+```
+
 
 ```{r Making DeSeq object, include=FALSE}
 #making the dds model to use in deseq2
 dds_mcav = DESeqDataSetFromMatrix(round(mcav_counts), mcav_meta, ~ Correct_treatment)
-dds_ofav = DESeqDataSetFromMatrix(round(ofav_counts), ofav_meta, ~ Correct_treatment)
+dds_ofav = DESeqDataSetFromMatrix(countdata, ofav_meta_dd, ~ Correct_treatment)
 ```
 
 ```{r}
@@ -242,8 +267,8 @@ grid.arrange(p, p2, p3, p4, ncol = 2, nrow=2)
 Look at variance and means because RNA data is overdispersed (i.e. variance in read counts will be higher than read counts)
 ```{r}
 #ofav 
-df <- data.frame(mean = apply(raw_counts_ofav[ ,ofav_meta$Correct_treatment == "control"], 1, mean),
-                 var = apply(raw_counts_ofav[ ,ofav_meta$Correct_treatment == "control"], 1, var))
+df <- data.frame(mean = apply(raw_counts_ofav[ ,ofav_meta_dd$Correct_treatment == "control"], 1, mean),
+                 var = apply(raw_counts_ofav[ ,ofav_meta_dd$Correct_treatment == "control"], 1, var))
 p <- ggplot(data=df, aes(x = mean, y = var))
 p <- p + geom_point(colour = "orange")
 p <- p + theme_bw()
@@ -262,8 +287,8 @@ p2 <- p2 + ggtitle("Variance versus mean in counts mcav") + ylab("variance")
 print(p2)
 
 #ofav 
-df <- data.frame(mean = apply(raw_counts_ofav[ ,ofav_meta$Correct_treatment == "control"], 1, mean),
-                 var = apply(raw_counts_ofav[ ,ofav_meta$Correct_treatment == "control"], 1, var))
+df <- data.frame(mean = apply(raw_counts_ofav[ ,ofav_meta_dd$Correct_treatment == "control"], 1, mean),
+                 var = apply(raw_counts_ofav[ ,ofav_meta_dd$Correct_treatment == "control"], 1, var))
 df <- df[df$mean <= 5000, ]
 p <- ggplot(data=df, aes(x = mean, y = var))
 p <- p + geom_point(colour = "orange")
@@ -289,7 +314,7 @@ library(factoextra)
 #ofav
 res.pca <- prcomp(t(pseudo_counts_ofav), scale = TRUE)
 fviz_eig(res.pca)
-groups <- as.factor(ofav_meta$Correct_treatment)
+groups <- as.factor(ofav_meta_dd$Correct_treatment)
 fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
 
 #mcav
@@ -300,7 +325,7 @@ fviz_pca_ind(res.pca2, col.ind=groups, label=FALSE)
 ```
 ## Normalization ##
 ```{r}
-# Use DESeq - corrects for library size NOT gene specific -- NOT GOOD FOR 3' need to read in DESeq object without length correction
+# Use DESeq - corrects for library size NOT gene specific 
 #ofav
 sizefact <- estimateSizeFactorsForMatrix(raw_counts_ofav)
 sizefact_dd <- estimateSizeFactors(dds_ofav)
@@ -333,7 +358,7 @@ dge2 <- DGEList(raw_counts_ofav)
 dge2
 
 dge2$samples
-dge2_keep <- filterByExpr(dge2, group=ofav_meta$Correct_treatment, min.count=34)
+dge2_keep <- filterByExpr(dge2, group=ofav_meta_dd$Correct_treatment, min.count=34)
 summary(dge2_keep)
 dge2 <- dge2[dge2_keep, , keep.lib.sizes=FALSE]
 
@@ -380,46 +405,13 @@ df_RPKM2 <- melt(as.matrix(pseudo_RPKM2), id = rownames(raw_counts_mcav))
 names(df_RPKM2)[1:2] <- c ("id", "sample")
 df_RPKM2$method <- rep("RPKM", nrow(df_RPKM2))
 ```
-Normaliztion method: Upper Quartile, not working, getting inf or nan for norm factor
-```{r}
-#ofav
-dge2 <- calcNormFactors(dge2, method = "upperquartile")
-dge2$samplesdge3_keep <- filterByExpr(dge3, group=mcav_meta$Correct_treatment, min.count=15)
-dge3 <- dge3[dge3_keep, , keep.lib.sizes=FALSE]
 
-test_normcount <- sweep(dge2$counts, 2,
-                        dge2$samples$lib.size*dge2$samples$norm.factors / 10^6,
-                        FUN="/")
-range(as.vector(test_normcount - cpm(dge2)))
-
-pseudo_UQ <- log2(cpm(dge2) + 1)
-
-df_UQ <- melt(as.matrix(pseudo_UQ), id = rownames(raw_counts_ofav))
-names(df_UQ)[1:2] <- c ("id", "sample")
-df_UQ$method <- rep("UQ", nrow(df_UQ))
-
-#mcav
-dge3 <- calcNormFactors(dge3, method = "upperquartile")
-dge3$samples
-dge3_keep <- filterByExpr(dge3, group=mcav_meta$Correct_treatment)
-dge3 <- dge3[dge3_keep, , keep.lib.sizes=FALSE]
-test_normcount2 <- sweep(dge3$counts, 2,
-                        dge3$samples$lib.size*dge3$samples$norm.factors / 10^6,
-                        FUN="/")
-range(as.vector(test_normcount2 - cpm(dge3)))
-
-pseudo_UQ2 <- log2(cpm(dge3) + 1)
-
-df_UQ2 <- melt(as.matrix(pseudo_UQ2), id = rownames(raw_counts_mcav))
-names(df_UQ2)[1:2] <- c ("id", "sample")
-df_UQ2$method <- rep("UQ", nrow(df_UQ2))
-```
 Normalization method: TMM
 ```{r}
 #ofav
 dge2 <- calcNormFactors(dge2, method = "TMM")
 dge2$samples
-dge2_keep <- filterByExpr(dge2, group=ofav_meta$Correct_treatment, min.count=34)
+dge2_keep <- filterByExpr(dge2, group=ofav_meta_dd$Correct_treatment, min.count=34)
 dge2 <- dge2[dge2_keep, , keep.lib.sizes=FALSE]
 pseudo_TMM <- log2(cpm(dge2) + 1)
 
@@ -441,10 +433,9 @@ df_TMM2$method <- rep("TMM", nrow(df_TMM2))
 Compare all normalization methods 
 ```{r, fig.width=10}
 # Plots for ofav
-df_allnorm <- rbind(df_raw_ofav, df_deseq, df_TC, df_RPKM, df_TMM)
+df_allnorm <- rbind(df_raw_ofav, df_deseq, df_RPKM, df_TC, df_TMM)
 df_allnorm$method <- factor(df_allnorm$method,
-                            levels = c("Raw counts", "DESeq (RLE)", "TC", 
-                                       "RPKM", "TMM"))
+                            levels = c("Raw counts", "DESeq (RLE)", "RPKM","TC", "TMM"))
 
 p <- ggplot(data=df_allnorm, aes(x=sample, y=value, fill=method))
 p <- p + geom_boxplot()  
@@ -456,14 +447,15 @@ p <- p + ylab(expression(log[2] ~ (normalized ~ count + 1))) + xlab("")
 p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
                axis.ticks.x = element_blank())
 print(p)
+
+ggsave("ofav_normalized_compare.jpeg", plot=p, width=10, height=8)
 ```
 
 ```{r, fig.width=10}
 # Plots for mcav
-df_allnorm2 <- rbind(df_raw_mcav, df_deseq2, df_TC2, df_RPKM2, df_TMM2)
+df_allnorm2 <- rbind(df_raw_mcav, df_deseq2, df_RPKM2, df_TC2, df_TMM2)
 df_allnorm2$method <- factor(df_allnorm2$method,
-                            levels = c("Raw counts", "DESeq (RLE)", "TC", 
-                                       "RPKM", "TMM"))
+                            levels = c("Raw counts", "DESeq (RLE)", "RPKM", "TC", "TMM"))
 
 p2 <- ggplot(data=df_allnorm2, aes(x=sample, y=value, fill=method))
 p2 <- p2 + geom_boxplot()  
@@ -475,19 +467,27 @@ p2 <- p2 + ylab(expression(log[2] ~ (normalized ~ count + 1))) + xlab("")
 p2 <- p2 + theme(title = element_text(size=10), axis.text.x = element_blank(), 
                axis.ticks.x = element_blank())
 print(p2)
+
+ggsave("mcav_normalized_compare.jpeg", plot=p2, width=10, height=8)
 ```
+
+Density plots after normalization
 ```{r, fig.width=10}
 #ofav
 p <- ggplot(data=df_allnorm, aes(x=value, colour=sample))
 p <- p + geom_density()  
 p <- p + theme_bw()
 p <- p + ggtitle("Density of normalized pseudo counts\n
-for all samples by normalization methods - ofav")
+for all samples by normalization methods - ofav\n
+lines are colored by sample")
 p <- p + facet_grid(. ~ method) 
 p <- p + ylab(expression(log[2] ~ (normalized ~ count + 1))) + xlab("")
 p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
                axis.ticks.x = element_blank())
+p <- p + theme(legend.position = "none")
 print(p)
+
+ggsave("ofav_normalized_density.jpeg", plot=p, width=10, height=8)
 ```
 
 ```{r, fig.width=10}
@@ -501,53 +501,45 @@ p2 <- p2 + facet_grid(. ~ method)
 p2 <- p2 + ylab(expression(log[2] ~ (normalized ~ count + 1))) + xlab("")
 p2 <- p2 + theme(title = element_text(size=10), axis.text.x = element_blank(), 
                axis.ticks.x = element_blank())
+p2 <- p2 + theme(legend.position = "none")
 print(p2)
+
+ggsave("mcav_normalized_density.jpeg", plot=p2, width=10, height=8)
 ```
 # Repeat PCA with normalized TMM data
 
 The red dashed line on the graph of PC variance explained bars indicates the expected average contribution. If the contribution of the variables were uniform, the expected value would be 1/length(variables) = 1/10 = 10%. For a given component, a variable with a contribution larger than this cutoff could be considered as important in contributing to the component.
 ```{r}
 #ofav
-res.pca <- prcomp(t(pseudo_RPKM), scale = TRUE)
+res.pca <- prcomp(t(pseudo_TMM), scale = TRUE)
 fviz_eig(res.pca)
-fviz_pca_var(res.pca2, select.var = list(contrib = 10))
-groups <- as.factor(ofav_meta$Correct_treatment)
-fviz_pca_ind(res.pca, habillage = ofav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
 
 # Contributions of variables to PC1
 fviz_contrib(res.pca, choice = "var", axes = 1, top = 10)
 # Contributions of variables to PC2
 fviz_contrib(res.pca, choice = "var", axes = 2, top = 10)
 
-res.pca <- prcomp(t(pseudo_TMM), scale = TRUE)
-fviz_eig(res.pca)
 fviz_pca_var(res.pca, select.var = list(contrib = 3))
-groups <- as.factor(ofav_meta$Correct_treatment)
-fviz_pca_ind(res.pca, habillage = ofav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
+groups <- as.factor(ofav_meta_dd$Correct_treatment)
+fviz_pca_ind(res.pca, habillage = ofav_meta_dd$Correct_treatment, addEllipses=TRUE, label=FALSE)
 
-groups <- as.factor(ofav_meta$Project)
-fviz_pca_ind(res.pca, habillage = ofav_meta$Project, addEllipses=TRUE, label=FALSE)
+groups <- as.factor(ofav_meta_dd$Project)
+fviz_pca_ind(res.pca, habillage = ofav_meta_dd$percent_disease_progress, addEllipses=TRUE, label=FALSE)
 
-groups <- as.factor(ofav_meta$Exp_frag_genet)
-fviz_pca_ind(res.pca, habillage = ofav_meta$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
+groups <- as.factor(ofav_meta_dd$Exp_frag_genet)
+fviz_pca_ind(res.pca, habillage = ofav_meta_dd$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
 ```
 The red dashed line on the graph of PC variance explained bars indicates the expected average contribution. If the contribution of the variables were uniform, the expected value would be 1/length(variables) = 1/10 = 10%. For a given component, a variable with a contribution larger than this cutoff could be considered as important in contributing to the component.
 ```{r}
 #mcav
-res.pca2 <- prcomp(t(pseudo_RPKM2), scale = FALSE)
+res.pca2 <- prcomp(t(pseudo_TMM2), scale = TRUE)
 fviz_eig(res.pca2)
-fviz_pca_var(res.pca2, select.var = list(contrib = 10))
-groups <- as.factor(mcav_meta$Correct_treatment)
-fviz_pca_ind(res.pca2, habillage = mcav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
 
 # Contributions of variables to PC1
 fviz_contrib(res.pca2, choice = "var", axes = 1, top = 10)
 # Contributions of variables to PC2
 fviz_contrib(res.pca2, choice = "var", axes = 2, top = 10)
 
-#pc4 is ok
-res.pca2 <- prcomp(t(pseudo_TMM2), scale = TRUE)
-fviz_eig(res.pca2)
 fviz_pca_var(res.pca2, select.var = list(contrib = 3))
 groups <- as.factor(mcav_meta$Correct_treatment)
 fviz_pca_ind(res.pca2, habillage = mcav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
@@ -593,7 +585,7 @@ BCV plots show biological variation. High variance (above red line) will reduce 
 # OFAV
 Pairwise exact test: DEG_pairwiseExact will contain list of DEG, pvals_pairwiseExact will contain list of raw and BH corrected p-vals.
 ```{r}
-all_conditions <- setdiff(unique(ofav_meta$Correct_treatment), "control")
+all_conditions <- setdiff(unique(ofav_meta_dd$Correct_treatment), "control")
 DEG_pairwiseExact <- NULL
 pvals_pairwiseExact <- NULL
 par(mfrow = c(1,3))
@@ -602,7 +594,7 @@ for (ind in seq_along(all_conditions)) {
   sel_cols <- union(grep("control", colnames(raw_counts_ofav)),
                     grep("control", colnames(raw_counts_ofav), invert=TRUE))
   cur_counts <- raw_counts_ofav[ ,sel_cols]
-  group <- relevel(as.factor(ofav_meta$Correct_treatment[sel_cols]), ref = "control")
+  group <- relevel(as.factor(ofav_meta_dd$Correct_treatment[sel_cols]), ref = "control")
   cur_dge <- DGEList(cur_counts, group = group)
   cur_dge <- calcNormFactors(cur_dge, method = "TMM")
   
@@ -665,10 +657,10 @@ print(p)
 ```
 GLM with group effect (recommended rather than the exact test because it is more robust to variation in experimental design while exact test is best for one dimensional experimental designs)
 ```{r}
-cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta$Correct_treatment)
+cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta_dd$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
-group <- relevel(as.factor(ofav_meta$Correct_treatment), ref = "control")
+group <- relevel(as.factor(ofav_meta_dd$Correct_treatment), ref = "control")
 design_matrix <- model.matrix(~ group)
 design_matrix <- design_matrix[,1:2]
 
@@ -707,11 +699,13 @@ pvals_GLM1_ofav <- data.frame("pvalue" = pvals_GLM1,
                                       length(all_conditions)),
                          "condition" = rep(all_conditions,
                                            each=nrow(raw_counts_ofav)*2))
+
+ofav_DEG_GLM_treatment <- as.data.frame(res_GLM1$table)
 ```
 
 ```{r}
 # view summary of GLM results
-#num unique DEGs = 7 
+#num unique DEGs = 1128  !!! Genes of interest for differentiating disease adn control !!!
 table(DEG_GLM1_ofav$condition)
 
 # num up and down regulated (1 = upregulated)
@@ -733,11 +727,11 @@ print(p)
 GLM with effects of treatment and project
 ```{r}
 # create dataset with 'wt' and current mutant and normalize (TMM)
-cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta$Correct_treatment)
+cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta_dd$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
 # create design matrix
-design_matrix <- model.matrix(~ ofav_meta$Project + ofav_meta$Correct_treatment)
+design_matrix <- model.matrix(~ ofav_meta_dd$Exp_frag_genet + ofav_meta_dd$Correct_treatment)
 design_matrix <- design_matrix[,1:2]
 
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
@@ -778,7 +772,7 @@ pvals_GLM2_ofav <- data.frame("pvalue" = pvals_GLM2,
 ```
 
 ```{r}
-# number of DEGs = 1626 !!!! DUE TO INCLUSION OF PROJECT !!!
+# number of DEGs = 13 with genotype and treatment
 table(DEG_GLM2_ofav$condition)
 
 table(DEG_GLM2_ofav$condition, DEG_GLM2_ofav$UD)
@@ -1143,11 +1137,11 @@ vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_mcav,
 # Removing the effect of Project (i.e. location, mote vs. smithsonian)
 ```{r}
 # create dataset with 'wt' and current mutant and normalize (TMM)
-cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta$Correct_treatment)
+cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta_dd$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
 # create design matrix
-design_matrix <- model.matrix(~ ofav_meta$Correct_treatment - ofav_meta$Project)
+design_matrix <- model.matrix(~ ofav_meta_dd$Correct_treatment - ofav_meta_dd$Project)
 design_matrix <- design_matrix[,1:2]
 
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
