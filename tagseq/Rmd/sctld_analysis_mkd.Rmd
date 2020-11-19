@@ -15,6 +15,16 @@ library(ComplexHeatmap)
 library(limma)
 library(edgeR)
 library(pheatmap)
+library(topGO)
+library(ggplot2)
+library(gridExtra)
+library(reshape2)
+#library(mixOmics)
+library(RColorBrewer)
+library(VennDiagram)
+library(devtools)
+library(factoextra)
+library(topGO)
 ```
 
 
@@ -96,16 +106,16 @@ mkdir count_folder
 ```
 
 ```{r writing csv for all info mcav, include = F}
-write.csv(txi.salmon.count_mcav$counts, file = "~/Desktop/SCTLD_analysis/count_folder/mcav_counts.csv")
-write.csv(txi.salmon.count_mcav$abundance , file = "~/Desktop/SCTLD_analysis/count_folder/mcav_abundance.csv")
-write.csv(txi.salmon.count_mcav$length, file = "~/Desktop/SCTLD_analysis/count_folder/mcav_length.csv")
+#write.csv(txi.salmon.count_mcav$counts, file = "~/Desktop/SCTLD_analysis/count_folder/mcav_counts.csv")
+#write.csv(txi.salmon.count_mcav$abundance , file = "~/Desktop/SCTLD_analysis/count_folder/mcav_abundance.csv")
+#write.csv(txi.salmon.count_mcav$length, file = "~/Desktop/SCTLD_analysis/count_folder/mcav_length.csv")
 ```
 
 
 ```{r writing csv for all info ofav, include = F}
-write.csv(txi.salmon.count_ofav$counts, file = "~/Desktop/SCTLD_analysis/count_folder/ofav_counts.csv")
-write.csv(txi.salmon.count_ofav$abundance , file = "~/Desktop/SCTLD_analysis/count_folder/ofav_abundance.csv")
-write.csv(txi.salmon.count_ofav$length, file = "~/Desktop/SCTLD_analysis/count_folder/ofav_length.csv")
+#write.csv(txi.salmon.count_ofav$counts, file = "~/Desktop/SCTLD_analysis/count_folder/ofav_counts.csv")
+#write.csv(txi.salmon.count_ofav$abundance , file = "~/Desktop/SCTLD_analysis/count_folder/ofav_abundance.csv")
+#write.csv(txi.salmon.count_ofav$length, file = "~/Desktop/SCTLD_analysis/count_folder/ofav_length.csv")
 ```
 
 Now we are going to read in the metadata file and fix these for both species
@@ -133,25 +143,7 @@ nrow(ofav_meta)
 
 ## Read in Data and Make DESeq object
 REF: http://www.nathalievialaneix.eu/doc/html/TP1_normalization.html 
-```{r}
-library(ggplot2)
-library(gridExtra)
-library(reshape2)
-#library(mixOmics)
-library(RColorBrewer)
-library(DESeq2)
-library(edgeR)
-library(VennDiagram)
-library(devtools)
-```
 Make a data frame of the counts for normalization with edgeR
-```{r}
-#ofav_counts <- as.data.frame(txi.salmon.count_ofav$counts)
-mcav_counts <- as.data.frame(txi.salmon.count_mcav$counts)
-
-#ofav_lengths <- as.data.frame(txi.salmon.count_ofav$length)
-mcsv_lengths <- as.data.frame(txi.salmon.count_mcav$length)
-```
 
 ```{r}
 #setwd("~/Desktop")
@@ -176,11 +168,30 @@ countdata <- countdata[ ,-4]
 ofav_counts <- countdata
 ofav_meta_dd <- ofav_meta[grep("K53|K54|K55|K57|K58|K59|K60|K61|K62|K63|K65|K66|K68|K69|K70|K71|K72|K73|K74|K75|K76|K78|K79|K80|K81|K82", ofav_meta$Working.Label), ]
 ```
+```{r}
+setwd("~/Desktop")
+countdata_mc <- read.delim("mcav_counts", comment.char="#")
+```
+
+```{r}
+mcav_lengths <- as.data.frame(countdata_mc$Length)
+
+# Set Gene ID's as row names
+row.names(countdata_mc) <- countdata_mc$Geneid
+# Remove first six columns (Geneid, chr, start, end, strand, length)
+countdata_mc <- countdata_mc[ ,7:ncol(countdata_mc)]
+
+mcav_counts <- countdata_mc
+```
+```{r}
+setwd("~/Desktop")
+mcav_meta_dd <- read.csv("mcav_metadata_fixed.csv")
+```
 
 
 ```{r Making DeSeq object, include=FALSE}
 #making the dds model to use in deseq2
-dds_mcav = DESeqDataSetFromMatrix(round(mcav_counts), mcav_meta, ~ Correct_treatment)
+dds_mcav = DESeqDataSetFromMatrix(countdata_mc, mcav_meta_dd, ~ Correct_treatment)
 dds_ofav = DESeqDataSetFromMatrix(countdata, ofav_meta_dd, ~ Correct_treatment)
 ```
 
@@ -251,18 +262,19 @@ p2 <- p2 + xlab(expression(log[2](counts + 1)))
 df2 <- data.frame(rcounts = raw_counts_mcav[ ,1], prcounts = pseudo_counts_mcav[ ,1])
 
 p3 <- ggplot(data=df2, aes(x = rcounts, y = ..density..))
-p3 <- p + geom_histogram(fill = "lightblue")
-p3 <- p + theme_bw()
-p3 <- p + ggtitle(paste0("count distribution mcav"))
-p3 <- p + xlab("counts")
+p3 <- p3 + geom_histogram(fill = "lightblue")
+p3 <- p3 + theme_bw()
+p3 <- p3 + ggtitle(paste0("count distribution mcav"))
+p3 <- p3 + xlab("counts")
 
 p4 <- ggplot(data=df2, aes(x = prcounts, y = ..density..))
-p4 <- p2 + geom_histogram(fill = "lightblue")
-p4 <- p2 + theme_bw()
-p4 <- p2 + ggtitle(paste0("count distribution mcav log2"))
-p4 <- p2 + xlab(expression(log[2](counts + 1)))
+p4 <- p4 + geom_histogram(fill = "lightblue")
+p4 <- p4 + theme_bw()
+p4 <- p4 + ggtitle(paste0("count distribution mcav log2"))
+p4 <- p4 + xlab(expression(log[2](counts + 1)))
 
 grid.arrange(p, p2, p3, p4, ncol = 2, nrow=2)
+grid.arrange(p3, p4, ncol=2)
 ```
 Look at variance and means because RNA data is overdispersed (i.e. variance in read counts will be higher than read counts)
 ```{r}
@@ -277,8 +289,8 @@ p <- p + ggtitle("Variance versus mean in counts ofav") + ylab("variance")
 print(p)
 
 #mcav
-df2 <- data.frame(mean = apply(raw_counts_mcav[ ,mcav_meta$Correct_treatment == "control"], 1, mean),
-                 var = apply(raw_counts_mcav[ ,mcav_meta$Correct_treatment == "control"], 1, var))
+df2 <- data.frame(mean = apply(raw_counts_mcav[ ,mcav_meta_dd$Correct_treatment == "control"], 1, mean),
+                 var = apply(raw_counts_mcav[ ,mcav_meta_dd$Correct_treatment == "control"], 1, var))
 p2 <- ggplot(data=df2, aes(x = mean, y = var))
 p2 <- p2 + geom_point(colour = "orange")
 p2 <- p2 + theme_bw()
@@ -298,8 +310,8 @@ p <- p + ggtitle("Variance versus mean in counts ofav") + ylab("variance")
 print(p)
 
 #mcav
-df2 <- data.frame(mean = apply(raw_counts_mcav[ ,mcav_meta$Correct_treatment == "control"], 1, mean),
-                 var = apply(raw_counts_mcav[ ,mcav_meta$Correct_treatment == "control"], 1, var))
+df2 <- data.frame(mean = apply(raw_counts_mcav[ ,mcav_meta_dd$Correct_treatment == "control"], 1, mean),
+                 var = apply(raw_counts_mcav[ ,mcav_meta_dd$Correct_treatment == "control"], 1, var))
 df2 <- df2[df2$mean <= 5000, ]
 p2 <- ggplot(data=df2, aes(x = mean, y = var))
 p2 <- p2 + geom_point(colour = "orange")
@@ -320,7 +332,7 @@ fviz_pca_ind(res.pca, col.ind=groups, label=FALSE)
 #mcav
 res.pca2 <- prcomp(t(pseudo_counts_mcav), scale = TRUE)
 fviz_eig(res.pca2)
-groups <- as.factor(mcav_meta$Correct_treatment)
+groups <- as.factor(mcav_meta_dd$Correct_treatment)
 fviz_pca_ind(res.pca2, col.ind=groups, label=FALSE)
 ```
 ## Normalization ##
@@ -367,7 +379,7 @@ dge3 <- DGEList(raw_counts_mcav)
 dge3
 
 dge3$samples
-dge3_keep <- filterByExpr(dge3, group=mcav_meta$Correct_treatment, min.count=15)
+dge3_keep <- filterByExpr(dge3, group=mcav_meta_dd$Correct_treatment, min.count=15)
 summary(dge3_keep)
 dge3 <- dge3[dge3_keep, , keep.lib.sizes=FALSE]
 ```
@@ -398,7 +410,7 @@ names(df_RPKM)[1:2] <- c ("id", "sample")
 df_RPKM$method <- rep("RPKM", nrow(df_RPKM))
 
 #mcav
-mcav_lengths_use <- mcsv_lengths[rowSums(mcav_counts) > 0,]
+mcav_lengths_use <- mcav_lengths[rowSums(mcav_counts) > 0,]
 pseudo_RPKM2 <- log2(rpkm(dge3, gene.length = mcav_lengths_use) + 1)
 
 df_RPKM2 <- melt(as.matrix(pseudo_RPKM2), id = rownames(raw_counts_mcav))
@@ -422,7 +434,7 @@ df_TMM$method <- rep("TMM", nrow(df_TMM))
 #mcav
 dge3 <- calcNormFactors(dge3, method = "TMM")
 dge3$samples
-dge3_keep <- filterByExpr(dge3, group=mcav_meta$Correct_treatment, min.count=15)
+dge3_keep <- filterByExpr(dge3, group=mcav_meta_dd$Correct_treatment, min.count=15)
 dge3 <- dge3[dge3_keep, , keep.lib.sizes=FALSE]
 pseudo_TMM2 <- log2(cpm(dge3) + 1)
 
@@ -544,14 +556,14 @@ fviz_contrib(res.pca2, choice = "var", axes = 1, top = 10)
 fviz_contrib(res.pca2, choice = "var", axes = 2, top = 10)
 
 fviz_pca_var(res.pca2, select.var = list(contrib = 3))
-groups <- as.factor(mcav_meta$Correct_treatment)
-fviz_pca_ind(res.pca2, habillage = mcav_meta$Correct_treatment, addEllipses=TRUE, label=FALSE)
+groups <- as.factor(mcav_meta_dd$Correct_treatment)
+fviz_pca_ind(res.pca2, habillage = mcav_meta_dd$Correct_treatment, addEllipses=TRUE, label=FALSE)
 
-groups <- as.factor(mcav_meta$Project)
-fviz_pca_ind(res.pca2, habillage = mcav_meta$Project, addEllipses=TRUE, label=FALSE)
+groups <- as.factor(mcav_meta_dd$Project)
+fviz_pca_ind(res.pca2, habillage = mcav_meta_dd$Project, addEllipses=TRUE, label=FALSE)
 
-groups <- as.factor(mcav_meta$Exp_frag_genet)
-fviz_pca_ind(res.pca2, habillage = mcav_meta$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
+groups <- as.factor(mcav_meta_dd$Exp_frag_genet)
+fviz_pca_ind(res.pca2, habillage = mcav_meta_dd$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
 ```
 Try PCA with DESeq2 -- takes top ~500 rows
 ```{r}
@@ -573,7 +585,7 @@ ggplot(pcaData, aes(PC1, PC2, color=Correct_treatment, shape=Project)) +
    theme_bw()
 
 pcaData2 <- plotPCA(vsd2, intgroup=c("Correct_treatment","Project","Exp_frag_genet"), returnData=TRUE)
-percentVar <- round(100 * attr(pcaData, "percentVar"))
+percentVar <- round(100 * attr(pcaData2, "percentVar"))
 ggplot(pcaData2, aes(PC1, PC2, color=Correct_treatment, shape=Exp_frag_genet)) +
    stat_ellipse()+
   geom_point(size=3) +
@@ -887,7 +899,7 @@ vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_ofav,
 
 Pairwise exact test: DEG_pairwiseExact will contain list of DEG, pvals_pairwiseExact will contain list of raw and BH corrected p-vals.
 ```{r}
-all_conditions <- setdiff(unique(mcav_meta$Correct_treatment), "control")
+all_conditions <- setdiff(unique(mcav_meta_dd$Correct_treatment), "control")
 DEG_pairwiseExact <- NULL
 pvals_pairwiseExact <- NULL
 par(mfrow = c(1,3))
@@ -896,7 +908,7 @@ for (ind in seq_along(all_conditions)) {
   sel_cols <- union(grep("control", colnames(raw_counts_mcav)),
                     grep("control", colnames(raw_counts_mcav), invert=TRUE))
   cur_counts <- raw_counts_mcav[ ,sel_cols]
-  group <- relevel(as.factor(mcav_meta$Correct_treatment[sel_cols]), ref = "control")
+  group <- relevel(as.factor(mcav_meta_dd$Correct_treatment[sel_cols]), ref = "control")
   cur_dge <- DGEList(cur_counts, group = group)
   cur_dge <- calcNormFactors(cur_dge, method = "TMM")
   
@@ -959,10 +971,10 @@ print(p)
 ```
 GLM with group effect (recommended rather than the exact test because it is more robust to variation in experimental design while exact test is best for one dimensional experimental designs)
 ```{r}
-cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta$Correct_treatment)
+cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta_dd$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
-group <- relevel(as.factor(mcav_meta$Correct_treatment), ref = "control")
+group <- relevel(as.factor(mcav_meta_dd$Correct_treatment), ref = "control")
 design_matrix <- model.matrix(~ group)
 design_matrix <- design_matrix[,1:2]
 
@@ -1039,11 +1051,11 @@ print(p)
 GLM with effects of treatment and project
 ```{r}
 # create dataset with 'wt' and current mutant and normalize (TMM)
-cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta$Correct_treatment)
+cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta_dd$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
 # create design matrix
-design_matrix <- model.matrix(~ mcav_meta$Project + mcav_meta$Correct_treatment)
+design_matrix <- model.matrix(~ mcav_meta_dd$Project + mcav_meta_dd$Correct_treatment)
 design_matrix <- design_matrix[,1:2]
 
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
@@ -1219,12 +1231,12 @@ pvals_GLM2_noproj_ofav <- data.frame("pvalue" = pvals_GLM2,
 ```
 
 ```{r}
-# create dataset with 'wt' and current mutant and normalize (TMM)
-cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta$Correct_treatment)
+# create dataset with 'control' and 'current mutant'diseased' and normalize (TMM)
+cur_dge <- DGEList(raw_counts_mcav, group = mcav_meta_dd$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
 # create design matrix
-design_matrix <- model.matrix(~ mcav_meta$Correct_treatment - mcav_meta$Project)
+design_matrix <- model.matrix(~ mcav_meta_dd$Correct_treatment - mcav_meta_dd$Project)
 design_matrix <- design_matrix[,1:2]
 
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
@@ -1290,167 +1302,9 @@ vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_mcav,
                    cat.cex = 1.5, fontface="bold", filename="venn_DEG_mcav2.tiff")
 ```
 
-# volcano plots of DEG from GLM w/treatment
-Ref: https://www.rpubs.com/Knight95/volcano
 ```{r}
-# set up data - FDR
-ofav_DEG_GLM_treatment$expression = ifelse(ofav_DEG_GLM_treatment$PAdju_BH < 0.05 & abs(ofav_DEG_GLM_treatment$logFC) >= 1, 
-                     ifelse(ofav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
-                     'Stable')
+# save p-value tables of DEG from GLM (our favorite model) with treatment
 
-mcav_DEG_GLM_treatment$expression = ifelse(mcav_DEG_GLM_treatment$PAdju_BH < 0.05 & abs(mcav_DEG_GLM_treatment$logFC) >= 1, 
-                     ifelse(mcav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
-                     'Stable')
-```
-
-```{r}
-# set up data
-ofav_DEG_GLM_treatment$expression_bonf = ifelse(ofav_DEG_GLM_treatment$PAdju_bonf < 0.05 & abs(ofav_DEG_GLM_treatment$logFC) >= 1, 
-                     ifelse(ofav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
-                     'Stable')
-
-mcav_DEG_GLM_treatment$expression_bonf = ifelse(mcav_DEG_GLM_treatment$PAdju_bonf < 0.05 & abs(mcav_DEG_GLM_treatment$logFC) >= 1, 
-                     ifelse(mcav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
-                     'Stable')
-```
-
-```{r}
-ggplot(data = ofav_DEG_GLM_treatment, 
-            aes(x = logFC, 
-                y = -log10(ofav_DEG_GLM_treatment$PValue), 
-                colour=expression_bonf)) +
-  geom_point(alpha=0.4, size=3.5) +
-  scale_color_manual(values=c("blue", "grey","red"))+
-  xlim(c(-4.5, 4.5)) +
-  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
-  labs(x="log2(fold change)",
-       y="-log10 (adj.p-value)",
-       title="OFAV Differential expression - Bonferonni")  +
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5), 
-        legend.position="right", 
-        legend.title = element_blank())
-```
-```{r}
-ggplot(data = mcav_DEG_GLM_treatment, 
-            aes(x = logFC, 
-                y = -log10(mcav_DEG_GLM_treatment$PValue), 
-                colour=expression_bonf)) +
-  geom_point(alpha=0.4, size=3.5) +
-  scale_color_manual(values=c("blue", "grey","red"))+
-  xlim(c(-4.5, 4.5)) +
-  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
-  labs(x="log2(fold change)",
-       y="-log10 (adj.p-value)",
-       title="MCAV Differential expression - Bonferonni")  +
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5), 
-        legend.position="right", 
-        legend.title = element_blank())
-```
-```{r}
-ggplot(data = ofav_DEG_GLM_treatment, 
-            aes(x = logFC, 
-                y = -log10(ofav_DEG_GLM_treatment$PValue), 
-                colour=expression)) +
-  geom_point(alpha=0.4, size=3.5) +
-  scale_color_manual(values=c("blue", "grey","red"))+
-  xlim(c(-4.5, 4.5)) +
-  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
-  labs(x="log2(fold change)",
-       y="-log10 (adj.p-value)",
-       title="OFAV Differential expression - FDR")  +
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5), 
-        legend.position="right", 
-        legend.title = element_blank())
-```
-
-```{r}
-ggplot(data = mcav_DEG_GLM_treatment, 
-            aes(x = logFC, 
-                y = -log10(mcav_DEG_GLM_treatment$PValue), 
-                colour=expression)) +
-  geom_point(alpha=0.4, size=3.5) +
-  scale_color_manual(values=c("blue", "grey","red"))+
-  xlim(c(-4.5, 4.5)) +
-  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
-  labs(x="log2(fold change)",
-       y="-log10 (adj.p-value)",
-       title="MCAV Differential expression - FDR")  +
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5), 
-        legend.position="right", 
-        legend.title = element_blank())
-```
-```{r}
-# save p-value tables of DEG from GLM with treatment
-
-write.csv(ofav_DEG_GLM_treatment, "ofav_DEG_GLM_treatment.csv")
+#write.csv(ofav_DEG_GLM_treatment, "ofav_DEG_GLM_treatment.csv")
 #write.csv(mcav_DEG_GLM_treatment, "mcav_DEG_GLM_treatment.csv")
 ```
-
-# Gene annotation of ofav
-```{r}
-setwd("~/Desktop")
-ofav_emapper_prot <-read.csv("ofav.protein.emapper.csv")
-
-ofav_prot <- read.csv("ofav_proteins_13173_311351.csv")
-
-ofav_DEG_GLM_treatment_locus <- as.data.frame(add_rownames(ofav_DEG_GLM_treatment, var = "locus"))
-
-```
-
-```{r}
-ofav_annot_DEG <- left_join(ofav_DEG_GLM_treatment_locus, ofav_prot, by="locus")
-```
-
-```{r}
-ofav_annot_DEG_emap <- left_join(ofav_annot_DEG, ofav_emapper_prot, by="protein_product")
-```
-
-```{r}
-write.csv(ofav_annot_DEG_emap, "ofav_annot_DEG_emap.csv")
-```
-
-
-# GO analysis
-Ref: https://ucdavis-bioinformatics-training.github.io/2018-June-RNA-Seq-Workshop/friday/enrichment.html
-```{r}
-library(topGO)
-```
-GO using GO_MWU
-https://github.com/z0on/GO_MWU/blob/master/GO_MWU.R
-```{r}
-# Edit these to match your data file names: 
-# two columns of comma-separated values: gene id, continuous measure of significance. To perform standard GO enrichment analysis based on Fisher's exact test, use binary measure (0 or 1, i.e., either sgnificant or not).
-input= data.frame(ofav_annot_DEG_emap$locus, ofav_annot_DEG_emap$PAdju_bonf)
-
-# two-column, tab-delimited, one line per gene, multiple GO terms separated by semicolon. If you have multiple lines per gene, use nrify_GOtable.pl prior to running this script.
-goAnnotations <-data.frame(ofav_annot_DEG_emap$locus, ofav_annot_DEG_emap$GOs)
-
-setwd("~/Desktop")
-# download from http://www.geneontology.org/GO.downloads.ontology.shtml
-goDatabase <- read.csv("go.obo")
-
-# either MF, or BP, or CC
-goDivision="CC"  
-
-source("gomwu.functions.R")
-```
-```{r}
-gomwuStats(input, goDatabase, goAnnotations, goDivision,
-	perlPath="perl", # replace with full path to perl executable if it is not in your system's PATH already
-	largest=0.1,  # a GO category will not be considered if it contains more than this fraction of the total number of genes
-	smallest=5,   # a GO category should contain at least this many genes to be considered
-	clusterCutHeight=0.25, # threshold for merging similar (gene-sharing) terms. See README for details.
-#	Alternative="g" # by default the MWU test is two-tailed; specify "g" or "l" of you want to test for "greater" or "less" instead. 
-#	Module=TRUE,Alternative="g" # un-remark this if you are analyzing a SIGNED WGCNA module (values: 0 for not in module genes, kME for in-module genes). In the call to gomwuPlot below, specify absValue=0.001 (count number of "good genes" that fall into the module)
-#	Module=TRUE # un-remark this if you are analyzing an UNSIGNED WGCNA module 
-)
-```
-cytoscape with BiNGO
