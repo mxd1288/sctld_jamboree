@@ -528,6 +528,9 @@ fviz_pca_ind(res.pca, habillage = ofav_meta_dd$percent_disease_progress, addElli
 
 groups <- as.factor(ofav_meta_dd$Exp_frag_genet)
 fviz_pca_ind(res.pca, habillage = ofav_meta_dd$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
+
+groups <- as.factor(ofav_meta_dd$Exp_frag_genet)
+fviz_pca_ind(res.pca, habillage = ofav_meta_dd$Exp_frag_genet, addEllipses=TRUE, label=FALSE)
 ```
 The red dashed line on the graph of PC variance explained bars indicates the expected average contribution. If the contribution of the variables were uniform, the expected value would be 1/length(variables) = 1/10 = 10%. For a given component, a variable with a contribution larger than this cutoff could be considered as important in contributing to the component.
 ```{r}
@@ -569,9 +572,9 @@ ggplot(pcaData, aes(PC1, PC2, color=Correct_treatment, shape=Project)) +
   coord_fixed()+
    theme_bw()
 
-pcaData2 <- plotPCA(vsd2, intgroup=c("Correct_treatment","Project"), returnData=TRUE)
+pcaData2 <- plotPCA(vsd2, intgroup=c("Correct_treatment","Project","Exp_frag_genet"), returnData=TRUE)
 percentVar <- round(100 * attr(pcaData, "percentVar"))
-ggplot(pcaData2, aes(PC1, PC2, color=Correct_treatment, shape=Project)) +
+ggplot(pcaData2, aes(PC1, PC2, color=Correct_treatment, shape=Exp_frag_genet)) +
    stat_ellipse()+
   geom_point(size=3) +
   xlab(paste0("PC1: ",percentVar[1],"% variance")) +
@@ -741,7 +744,7 @@ cur_dge <- DGEList(raw_counts_ofav, group = ofav_meta_dd$Correct_treatment)
 cur_dge <- calcNormFactors(cur_dge, method = "TMM")
 
 # create design matrix
-design_matrix <- model.matrix(~ ofav_meta_dd$Exp_frag_genet + ofav_meta_dd$Correct_treatment)
+design_matrix <- model.matrix(~ ofav_meta_dd$Correct_treatment + ofav_meta_dd$Exp_frag_genet)
 design_matrix <- design_matrix[,1:2]
 
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
@@ -779,10 +782,22 @@ pvals_GLM2_ofav <- data.frame("pvalue" = pvals_GLM2,
                                       length(all_conditions)),
                          "condition" = rep(all_conditions,
                                            each=nrow(raw_counts_ofav)*2))
+
+ofav_DEG_GLM2_treatment <- as.data.frame(res_GLM2$table)
+#FDR correction
+ofav_DEG_GLM2_treatment$PAdju_BH <- p.adjust(res_GLM2$table$PValue, method="BH")
+#BONF correction
+ofav_DEG_GLM2_treatment$PAdju_bonf <- p.adjust(res_GLM2$table$PValue, method="bonferroni")
+
+# save sign from FDR and BONF conrrections
+# 1128 genes
+ofav_DEG_GLM2_treatment_sign_BH <- subset(ofav_DEG_GLM2_treatment, ofav_DEG_GLM2_treatment$PAdju_BH <0.05)
+# 221 genes
+ofav_DEG_GLM2_treatment_sign_bonf <- subset(ofav_DEG_GLM2_treatment, ofav_DEG_GLM2_treatment$PAdju_bonf <0.05)
 ```
 
 ```{r}
-# number of DEGs = 13 with genotype and treatment
+# number of DEGs = 1128 with genotype and treatment
 table(DEG_GLM2_ofav$condition)
 
 table(DEG_GLM2_ofav$condition, DEG_GLM2_ofav$UD)
@@ -1366,7 +1381,7 @@ ggplot(data = mcav_DEG_GLM_treatment,
   geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
   labs(x="log2(fold change)",
        y="-log10 (adj.p-value)",
-       title="OFAV Differential expression - FDR")  +
+       title="MCAV Differential expression - FDR")  +
   theme_bw()+
   theme(plot.title = element_text(hjust = 0.5), 
         legend.position="right", 
@@ -1376,6 +1391,66 @@ ggplot(data = mcav_DEG_GLM_treatment,
 # save p-value tables of DEG from GLM with treatment
 
 write.csv(ofav_DEG_GLM_treatment, "ofav_DEG_GLM_treatment.csv")
-write.csv(mcav_DEG_GLM_treatment, "mcav_DEG_GLM_treatment.csv")
+#write.csv(mcav_DEG_GLM_treatment, "mcav_DEG_GLM_treatment.csv")
 ```
 
+# Gene annotation of ofav
+```{r}
+setwd("~/Desktop")
+ofav_emapper_prot <-read.csv("ofav.protein.emapper.csv")
+
+ofav_prot <- read.csv("ofav_proteins_13173_311351.csv")
+
+ofav_DEG_GLM_treatment_locus <- as.data.frame(add_rownames(ofav_DEG_GLM_treatment, var = "locus"))
+
+```
+
+```{r}
+ofav_annot_DEG <- left_join(ofav_DEG_GLM_treatment_locus, ofav_prot, by="locus")
+```
+
+```{r}
+ofav_annot_DEG_emap <- left_join(ofav_annot_DEG, ofav_emapper_prot, by="protein_product")
+```
+
+```{r}
+write.csv(ofav_annot_DEG_emap, "ofav_annot_DEG_emap.csv")
+```
+
+
+# GO analysis
+Ref: https://ucdavis-bioinformatics-training.github.io/2018-June-RNA-Seq-Workshop/friday/enrichment.html
+```{r}
+library(topGO)
+```
+GO using GO_MWU
+https://github.com/z0on/GO_MWU/blob/master/GO_MWU.R
+```{r}
+# Edit these to match your data file names: 
+# two columns of comma-separated values: gene id, continuous measure of significance. To perform standard GO enrichment analysis based on Fisher's exact test, use binary measure (0 or 1, i.e., either sgnificant or not).
+input= data.frame(ofav_annot_DEG_emap$locus, ofav_annot_DEG_emap$PAdju_bonf)
+
+# two-column, tab-delimited, one line per gene, multiple GO terms separated by semicolon. If you have multiple lines per gene, use nrify_GOtable.pl prior to running this script.
+goAnnotations <-data.frame(ofav_annot_DEG_emap$locus, ofav_annot_DEG_emap$GOs)
+
+setwd("~/Desktop")
+# download from http://www.geneontology.org/GO.downloads.ontology.shtml
+goDatabase <- read.csv("go.obo")
+
+# either MF, or BP, or CC
+goDivision="CC"  
+
+source("gomwu.functions.R")
+```
+```{r}
+gomwuStats(input, goDatabase, goAnnotations, goDivision,
+	perlPath="perl", # replace with full path to perl executable if it is not in your system's PATH already
+	largest=0.1,  # a GO category will not be considered if it contains more than this fraction of the total number of genes
+	smallest=5,   # a GO category should contain at least this many genes to be considered
+	clusterCutHeight=0.25, # threshold for merging similar (gene-sharing) terms. See README for details.
+#	Alternative="g" # by default the MWU test is two-tailed; specify "g" or "l" of you want to test for "greater" or "less" instead. 
+#	Module=TRUE,Alternative="g" # un-remark this if you are analyzing a SIGNED WGCNA module (values: 0 for not in module genes, kME for in-module genes). In the call to gomwuPlot below, specify absValue=0.001 (count number of "good genes" that fall into the module)
+#	Module=TRUE # un-remark this if you are analyzing an UNSIGNED WGCNA module 
+)
+```
+cytoscape with BiNGO
