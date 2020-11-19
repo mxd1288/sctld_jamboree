@@ -701,6 +701,16 @@ pvals_GLM1_ofav <- data.frame("pvalue" = pvals_GLM1,
                                            each=nrow(raw_counts_ofav)*2))
 
 ofav_DEG_GLM_treatment <- as.data.frame(res_GLM1$table)
+#FDR correction
+ofav_DEG_GLM_treatment$PAdju_BH <- p.adjust(res_GLM1$table$PValue, method="BH")
+#BONF correction
+ofav_DEG_GLM_treatment$PAdju_bonf <- p.adjust(res_GLM1$table$PValue, method="bonferroni")
+
+# save sign from FDR and BONF conrrections
+# 1128 genes
+ofav_DEG_GLM_treatment_sign_BH <- subset(ofav_DEG_GLM_treatment, ofav_DEG_GLM_treatment$PAdju_BH <0.05)
+# 221 genes
+ofav_DEG_GLM_treatment_sign_bonf <- subset(ofav_DEG_GLM_treatment, ofav_DEG_GLM_treatment$PAdju_bonf <0.05)
 ```
 
 ```{r}
@@ -976,6 +986,18 @@ pvals_GLM1_mcav <- data.frame("pvalue" = pvals_GLM1,
                                       length(all_conditions)),
                          "condition" = rep(all_conditions,
                                            each=nrow(raw_counts_mcav)*2))
+
+mcav_DEG_GLM_treatment <- as.data.frame(res_GLM1$table)
+#FDR correction
+mcav_DEG_GLM_treatment$PAdju_BH <- p.adjust(res_GLM1$table$PValue, method="BH")
+#BONF correction
+mcav_DEG_GLM_treatment$PAdju_bonf <- p.adjust(res_GLM1$table$PValue, method="bonferroni")
+
+# save sign from FDR and BONF conrrections
+# 57 genes
+mcav_DEG_GLM_treatment_sign_BH <- subset(mcav_DEG_GLM_treatment, mcav_DEG_GLM_treatment$PAdju_BH <0.05)
+# 18 genes
+mcav_DEG_GLM_treatment_sign_bonf <- subset(mcav_DEG_GLM_treatment, mcav_DEG_GLM_treatment$PAdju_bonf <0.05)
 ```
 
 ```{r}
@@ -1253,9 +1275,107 @@ vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_mcav,
                    cat.cex = 1.5, fontface="bold", filename="venn_DEG_mcav2.tiff")
 ```
 
-# Cleaning up the Ofav
-variance may be due to some unknown factor -- maybe able to remove with SVA ()
+# volcano plots of DEG from GLM w/treatment
+Ref: https://www.rpubs.com/Knight95/volcano
 ```{r}
-BiocManager::install("sva")
-library(sva)
+# set up data - FDR
+ofav_DEG_GLM_treatment$expression = ifelse(ofav_DEG_GLM_treatment$PAdju_BH < 0.05 & abs(ofav_DEG_GLM_treatment$logFC) >= 1, 
+                     ifelse(ofav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                     'Stable')
+
+mcav_DEG_GLM_treatment$expression = ifelse(mcav_DEG_GLM_treatment$PAdju_BH < 0.05 & abs(mcav_DEG_GLM_treatment$logFC) >= 1, 
+                     ifelse(mcav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                     'Stable')
 ```
+
+```{r}
+# set up data
+ofav_DEG_GLM_treatment$expression_bonf = ifelse(ofav_DEG_GLM_treatment$PAdju_bonf < 0.05 & abs(ofav_DEG_GLM_treatment$logFC) >= 1, 
+                     ifelse(ofav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                     'Stable')
+
+mcav_DEG_GLM_treatment$expression_bonf = ifelse(mcav_DEG_GLM_treatment$PAdju_bonf < 0.05 & abs(mcav_DEG_GLM_treatment$logFC) >= 1, 
+                     ifelse(mcav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                     'Stable')
+```
+
+```{r}
+ggplot(data = ofav_DEG_GLM_treatment, 
+            aes(x = logFC, 
+                y = -log10(ofav_DEG_GLM_treatment$PValue), 
+                colour=expression_bonf)) +
+  geom_point(alpha=0.4, size=3.5) +
+  scale_color_manual(values=c("blue", "grey","red"))+
+  xlim(c(-4.5, 4.5)) +
+  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  labs(x="log2(fold change)",
+       y="-log10 (adj.p-value)",
+       title="OFAV Differential expression - Bonferonni")  +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        legend.position="right", 
+        legend.title = element_blank())
+```
+```{r}
+ggplot(data = mcav_DEG_GLM_treatment, 
+            aes(x = logFC, 
+                y = -log10(mcav_DEG_GLM_treatment$PValue), 
+                colour=expression_bonf)) +
+  geom_point(alpha=0.4, size=3.5) +
+  scale_color_manual(values=c("blue", "grey","red"))+
+  xlim(c(-4.5, 4.5)) +
+  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  labs(x="log2(fold change)",
+       y="-log10 (adj.p-value)",
+       title="MCAV Differential expression - Bonferonni")  +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        legend.position="right", 
+        legend.title = element_blank())
+```
+```{r}
+ggplot(data = ofav_DEG_GLM_treatment, 
+            aes(x = logFC, 
+                y = -log10(ofav_DEG_GLM_treatment$PValue), 
+                colour=expression)) +
+  geom_point(alpha=0.4, size=3.5) +
+  scale_color_manual(values=c("blue", "grey","red"))+
+  xlim(c(-4.5, 4.5)) +
+  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  labs(x="log2(fold change)",
+       y="-log10 (adj.p-value)",
+       title="OFAV Differential expression - FDR")  +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        legend.position="right", 
+        legend.title = element_blank())
+```
+
+```{r}
+ggplot(data = mcav_DEG_GLM_treatment, 
+            aes(x = logFC, 
+                y = -log10(mcav_DEG_GLM_treatment$PValue), 
+                colour=expression)) +
+  geom_point(alpha=0.4, size=3.5) +
+  scale_color_manual(values=c("blue", "grey","red"))+
+  xlim(c(-4.5, 4.5)) +
+  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  labs(x="log2(fold change)",
+       y="-log10 (adj.p-value)",
+       title="OFAV Differential expression - FDR")  +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        legend.position="right", 
+        legend.title = element_blank())
+```
+```{r}
+# save p-value tables of DEG from GLM with treatment
+
+write.csv(ofav_DEG_GLM_treatment, "ofav_DEG_GLM_treatment.csv")
+write.csv(mcav_DEG_GLM_treatment, "mcav_DEG_GLM_treatment.csv")
+```
+
