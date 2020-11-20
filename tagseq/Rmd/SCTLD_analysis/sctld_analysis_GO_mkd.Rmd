@@ -31,6 +31,8 @@ library(topGO)
 ```{r}
 setwd("~/Desktop")
 
+mcav_smit_DEG_GLM_treatment <- read.csv("mcav_smit_DEG_GLM_treatment.csv")
+mcav_mote_DEG_GLM_treatment <- read.csv("mcav_DEG_GLM_treatment.csv")
 ofav_DEG_GLM_treatment <- read.csv("ofav_DEG_GLM_treatment.csv")
 
 ofav_emapper_prot <-read.csv("ofav.protein.emapper.csv")
@@ -231,6 +233,15 @@ mcav_bonf_volc_smit
 #ggsave("mcav_bonf_volc_smit.jpeg", plot=mcav_bonf_volc_smit, width=8, height=8)
 ```
 
+DEGs in both projects for M.csv
+```{r}
+mcav_mote_DEG_GLM_treatment_sign_BH <- subset(mcav_mote_DEG_GLM_treatment, mcav_mote_DEG_GLM_treatment$PAdju_BH < 0.05)
+mcav_smit_DEG_GLM_treatment_sign_BH <- subset(mcav_smit_DEG_GLM_treatment, mcav_smit_DEG_GLM_treatment$PAdju_BH < 0.05)
+
+which_DEGs_mcav <- which(mcav_smit_DEG_GLM_treatment_sign_BH$X %in% mcav_mote_DEG_GLM_treatment_sign_BH$X)
+
+mcav_smit_mote_DEGs <-  data.frame(mcav_mote_DEG_GLM_treatment_sign_BH[ which(mcav_mote_DEG_GLM_treatment_sign_BH$X %in% mcav_smit_DEG_GLM_treatment_sign_BH$X),])
+```
 
 
 # GO analysis -- not working
@@ -316,3 +327,4 @@ ofav_metabolic <- ofav_annot_DEG_emap[grep("methylation", ofav_annot_DEG_emap$X.
 ofav_metabolic_sign <- subset(ofav_metabolic, ofav_metabolic$PAdju_BH < 0.05)
 head(ofav_metabolic_sign)
 ```
+
