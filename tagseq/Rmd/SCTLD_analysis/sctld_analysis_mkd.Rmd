@@ -37,13 +37,13 @@ The quant files are all on the box
 We are going to download the quant files so you can make the count tables yourself. To do that we are going to have a folder on the desktop as this means you will not have to chnage any paths.You just need to make sure everything is saved in the correct folders 
 
 ```{bash}
-cd ~/Desktop/sctld_jamboree
-mkdir SCTLD_analysis
+#cd ~/Desktop/sctld_jamboree
+#mkdir SCTLD_analysis
 ```
 
 ```{bash}
-cd ~/Desktop/sctld_jamboree/SCTLD_analysis
-mkdir scripts
+#cd ~/Desktop/sctld_jamboree/SCTLD_analysis
+#mkdir scripts
 ```
 
 Once you have done the above go to the box and download the  
@@ -85,23 +85,23 @@ all(file.exists(FILESmcav))
 
 ```{r Reading in Salmon Files ofav, include=F}
 #Importing the count data using salmon quant.sf files and the text to gene file
-setwd("~/Desktop/ofav_salmon_quant//")
-txi.salmon.count_ofav <- tximport(FILESofav, type = "salmon", txOut = TRUE )
+#setwd("~/Desktop/ofav_salmon_quant//")
+#txi.salmon.count_ofav <- tximport(FILESofav, type = "salmon", txOut = TRUE )
 ```
 
 ```{r Reading in Salmon Files mcav, include=F}
 #Importing the count data using salmon quant.sf files and the text to gene file
-setwd("~/Desktop/mcav_salmon_quant//")
-txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
+#setwd("~/Desktop/mcav_salmon_quant//")
+#txi.salmon.count_mcav <- tximport(FILESmcav, type = "salmon", txOut = TRUE )
 ```
 
 We have read these in so lets just save all our count, abundance and length files as well
 
 ```{bash}
-cd ~/Desktop
-mkdir SCTLD_analysis
-cd ~/Desktop/SCTLD_analysis/
-mkdir count_folder
+#cd ~/Desktop
+#mkdir SCTLD_analysis
+#cd ~/Desktop/SCTLD_analysis/
+#mkdir count_folder
 ```
 
 ```{r writing csv for all info mcav, include = F}
@@ -441,12 +441,32 @@ df_TMM2 <- melt(as.matrix(pseudo_TMM2), id = rownames(raw_counts_mcav))
 names(df_TMM2)[1:2] <- c ("id", "sample")
 df_TMM2$method <- rep("TMM", nrow(df_TMM2))
 ```
+Check convergence of iterations, last two should be within 0.01
+```{r}
+EBOut$Alpha
+
+EBOut$Beta
+
+EBOut$P
+```
+Check model fit
+```{r}
+par(mfrow=c(1,2))
+QQP(EBOut)
+```
+Check model fit
+```{r}
+par(mfrow=c(1,2))
+DenNHist(EBOut)
+```
+
+
 Compare all normalization methods 
 ```{r, fig.width=10}
 # Plots for ofav
-df_allnorm <- rbind(df_raw_ofav, df_deseq, df_RPKM, df_TC, df_TMM)
+df_allnorm <- rbind(df_raw_ofav, df_deseq, df_RPKM, df_TC, df_TMM, df_MRN)
 df_allnorm$method <- factor(df_allnorm$method,
-                            levels = c("Raw counts", "DESeq (RLE)", "RPKM","TC", "TMM"))
+                            levels = c("Raw counts", "DESeq (RLE)", "RPKM","TC", "TMM", "MRN"))
 
 p <- ggplot(data=df_allnorm, aes(x=sample, y=value, fill=method))
 p <- p + geom_boxplot()  
@@ -459,7 +479,7 @@ p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(),
                axis.ticks.x = element_blank())
 print(p)
 
-ggsave("ofav_normalized_compare.jpeg", plot=p, width=10, height=8)
+#ggsave("ofav_normalized_compare.jpeg", plot=p, width=10, height=8)
 ```
 
 ```{r, fig.width=10}
@@ -479,7 +499,7 @@ p2 <- p2 + theme(title = element_text(size=10), axis.text.x = element_blank(),
                axis.ticks.x = element_blank())
 print(p2)
 
-ggsave("mcav_normalized_compare.jpeg", plot=p2, width=10, height=8)
+#ggsave("mcav_normalized_compare.jpeg", plot=p2, width=10, height=8)
 ```
 
 Density plots after normalization
@@ -498,7 +518,7 @@ p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(),
 p <- p + theme(legend.position = "none")
 print(p)
 
-ggsave("ofav_normalized_density.jpeg", plot=p, width=10, height=8)
+#ggsave("ofav_normalized_density.jpeg", plot=p, width=10, height=8)
 ```
 
 ```{r, fig.width=10}
@@ -515,7 +535,7 @@ p2 <- p2 + theme(title = element_text(size=10), axis.text.x = element_blank(),
 p2 <- p2 + theme(legend.position = "none")
 print(p2)
 
-ggsave("mcav_normalized_density.jpeg", plot=p2, width=10, height=8)
+#ggsave("mcav_normalized_density.jpeg", plot=p2, width=10, height=8)
 ```
 # Repeat PCA with normalized TMM data
 
@@ -681,7 +701,7 @@ design_matrix <- design_matrix[,1:2]
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
 cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
 cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
-plotBCV(cur_dge, main = paste0("BCV plot"))
+BCV <- plotBCV(cur_dge, main = paste0("BCV plot"))
 
 # GLM fit
 fit <- glmFit(cur_dge, design_matrix)
@@ -725,6 +745,7 @@ ofav_DEG_GLM_treatment$PAdju_bonf <- p.adjust(res_GLM1$table$PValue, method="bon
 ofav_DEG_GLM_treatment_sign_BH <- subset(ofav_DEG_GLM_treatment, ofav_DEG_GLM_treatment$PAdju_BH <0.05)
 # 221 genes
 ofav_DEG_GLM_treatment_sign_bonf <- subset(ofav_DEG_GLM_treatment, ofav_DEG_GLM_treatment$PAdju_bonf <0.05)
+
 ```
 
 ```{r}
@@ -747,6 +768,8 @@ p <- p + facet_grid(type ~ condition)
 p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
                axis.ticks.x = element_blank())
 print(p)
+
+#ggsave("hist_GLM_pvals.jpeg", p, width=10, height=8)
 ```
 GLM with effects of treatment and project
 ```{r}
@@ -761,7 +784,10 @@ design_matrix <- design_matrix[,1:2]
 cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
 cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
 cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+
+jpeg(file="BCV_ofav.jpeg")
 plotBCV(cur_dge, main = paste0("BCV plot"))
+dev.off()
 
 # GLM fit
 fit <- glmFit(cur_dge, design_matrix)
@@ -1018,12 +1044,6 @@ mcav_DEG_GLM_treatment <- as.data.frame(res_GLM1$table)
 mcav_DEG_GLM_treatment$PAdju_BH <- p.adjust(res_GLM1$table$PValue, method="BH")
 #BONF correction
 mcav_DEG_GLM_treatment$PAdju_bonf <- p.adjust(res_GLM1$table$PValue, method="bonferroni")
-
-# save sign from FDR and BONF conrrections
-# 57 genes
-mcav_DEG_GLM_treatment_sign_BH <- subset(mcav_DEG_GLM_treatment, mcav_DEG_GLM_treatment$PAdju_BH <0.05)
-# 18 genes
-mcav_DEG_GLM_treatment_sign_bonf <- subset(mcav_DEG_GLM_treatment, mcav_DEG_GLM_treatment$PAdju_bonf <0.05)
 ```
 
 ```{r}
@@ -1305,5 +1325,199 @@ vd <- venn.diagram(x=list("Exact test" = listDEG_pairwiseExact_mcav,
 # save p-value tables of DEG from GLM (our favorite model) with treatment
 
 #write.csv(ofav_DEG_GLM_treatment, "ofav_DEG_GLM_treatment.csv")
-#write.csv(mcav_DEG_GLM_treatment, "mcav_DEG_GLM_treatment.csv")
 ```
+
+# subset of mcav data
+```{r}
+dds_mcav_mote <- dds_mcav[, colData(dds_mcav)$Project != "Smithsonian"]
+mcav_mote_meta <- subset(mcav_meta_dd, mcav_meta_dd$Project != "Smithsonian")
+```
+
+```{r}
+which(colnames(raw_counts_mcav) %in% mcav_mote_meta$Working.Label)
+raw_counts_mcav_mote <- data.frame(raw_counts_mcav[ which(colnames(raw_counts_mcav) %in% mcav_mote_meta$Working.Label)])
+```
+
+
+```{r}
+cur_dge <- DGEList(raw_counts_mcav_mote, group = mcav_mote_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+group <- relevel(as.factor(mcav_mote_meta$Correct_treatment), ref = "control")
+design_matrix <- model.matrix(~ group)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+
+jpeg(file="BCV_mcav.jpeg")
+plotBCV(cur_dge, main = paste0("BCV plot"))
+dev.off()
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM1 <- NULL
+pvals_GLM1 <- NULL
+for (ind in 1) {
+  res_GLM1 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM1 <- c(pvals_GLM1, res_GLM1$table$PValue,
+                  p.adjust(res_GLM1$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM1))
+  
+  cur_res <- decideTestsDGE(res_GLM1, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_mcav_mote)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM1 <- rbind(DEG_GLM1, cur_res)
+}
+
+DEG_GLM1_mcav <- as.data.frame(DEG_GLM1)
+names(DEG_GLM1_mcav) <- c("name", "UD", "condition")
+listDEG_GLM1_mcav <- unique(DEG_GLM1_mcav$name)
+
+pvals_GLM1_mcav <- data.frame("pvalue" = pvals_GLM1,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_mcav_mote)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_mcav_mote)*2))
+
+mcav_mote_DEG_GLM_treatment <- as.data.frame(res_GLM1$table)
+#FDR correction
+mcav_mote_DEG_GLM_treatment$PAdju_BH <- p.adjust(res_GLM1$table$PValue, method="BH")
+#BONF correction
+mcav_mote_DEG_GLM_treatment$PAdju_bonf <- p.adjust(res_GLM1$table$PValue, method="bonferroni")
+
+# save sign from FDR and BONF conrrections
+# 61 genes
+mcav_mote_DEG_GLM_treatment_sign_BH <- subset(mcav_mote_DEG_GLM_treatment, mcav_mote_DEG_GLM_treatment$PAdju_BH <0.05)
+# 8 genes
+mcav_mote_DEG_GLM_treatment_sign_bonf <- subset(mcav_mote_DEG_GLM_treatment, mcav_mote_DEG_GLM_treatment$PAdju_bonf <0.05)
+```
+
+```{r}
+# view summary of GLM results
+#num unique DEGs = 57
+table(DEG_GLM1_mcav$condition)
+
+# num up and down regulated (1 = upregulated)
+table(DEG_GLM1_mcav$condition, DEG_GLM1_mcav$UD)
+
+# total list length
+length(listDEG_GLM1_mcav)
+
+# visualize distribution of p-vals and corrected p-vals
+p <- ggplot(data = pvals_GLM1_mcav, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+
+#ggsave("hist_GLM_pvals_mcav.jpeg", p, width=10, height=8)
+```
+
+```{r}
+#write.csv(mcav_mote_DEG_GLM_treatment, "mcav_mote_DEG_GLM_treatment.csv")
+```
+
+```{r}
+mcav_smit_meta <- subset(mcav_meta_dd, mcav_meta_dd$Project == "Smithsonian")
+which(colnames(raw_counts_mcav) %in% mcav_smit_meta$Working.Label)
+raw_counts_mcav_smit <- data.frame(raw_counts_mcav[ which(colnames(raw_counts_mcav) %in% mcav_smit_meta$Working.Label)])
+```
+
+```{r}
+cur_dge <- DGEList(raw_counts_mcav_smit, group = mcav_smit_meta$Correct_treatment)
+cur_dge <- calcNormFactors(cur_dge, method = "TMM")
+
+group <- relevel(as.factor(mcav_smit_meta$Correct_treatment), ref = "control")
+design_matrix <- model.matrix(~ group)
+design_matrix <- design_matrix[,1:2]
+
+cur_dge <- estimateGLMCommonDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTrendedDisp(cur_dge, design_matrix)
+cur_dge <- estimateGLMTagwiseDisp(cur_dge, design_matrix)
+
+jpeg(file="BCV_mcav_smit.jpeg")
+plotBCV(cur_dge, main = paste0("BCV plot"))
+dev.off()
+
+# GLM fit
+fit <- glmFit(cur_dge, design_matrix)
+DEG_GLM1 <- NULL
+pvals_GLM1 <- NULL
+for (ind in 1) {
+  res_GLM1 <- glmLRT(fit, coef = ind+1)
+  pvals_GLM1 <- c(pvals_GLM1, res_GLM1$table$PValue,
+                  p.adjust(res_GLM1$table$PValue, method = "BH"))
+
+  cat("Top 10 DEG for 'control' vs '", all_conditions[ind], "':\n")
+  print(topTags(res_GLM1))
+  
+  cur_res <- decideTestsDGE(res_GLM1, adjust.method = "BH", p.value = 0.05)
+  print(cur_res)
+  sel_deg <- which(cur_res[ ,1] != 0)
+  cur_res <- cbind(rownames(raw_counts_mcav_mote)[sel_deg], cur_res[sel_deg,1],
+                   rep(all_conditions[ind], length(sel_deg)))
+  DEG_GLM1 <- rbind(DEG_GLM1, cur_res)
+}
+
+DEG_GLM1_mcav <- as.data.frame(DEG_GLM1)
+names(DEG_GLM1_mcav) <- c("name", "UD", "condition")
+listDEG_GLM1_mcav <- unique(DEG_GLM1_mcav$name)
+
+pvals_GLM1_mcav <- data.frame("pvalue" = pvals_GLM1,
+                         "type" = rep(rep(c("raw", "adjusted"),
+                                          each = nrow(raw_counts_mcav_mote)),
+                                      length(all_conditions)),
+                         "condition" = rep(all_conditions,
+                                           each=nrow(raw_counts_mcav_mote)*2))
+
+mcav_smit_DEG_GLM_treatment <- as.data.frame(res_GLM1$table)
+#FDR correction
+mcav_smit_DEG_GLM_treatment$PAdju_BH <- p.adjust(res_GLM1$table$PValue, method="BH")
+#BONF correction
+mcav_smit_DEG_GLM_treatment$PAdju_bonf <- p.adjust(res_GLM1$table$PValue, method="bonferroni")
+
+# save sign from FDR and BONF conrrections
+# 61 genes
+mcav_smit_DEG_GLM_treatment_sign_BH <- subset(mcav_smit_DEG_GLM_treatment, mcav_smit_DEG_GLM_treatment$PAdju_BH <0.05)
+# 8 genes
+mcav_smit_DEG_GLM_treatment_sign_bonf <- subset(mcav_smit_DEG_GLM_treatment, mcav_smit_DEG_GLM_treatment$PAdju_bonf <0.05)
+```
+
+```{r}
+# view summary of GLM results
+#num unique DEGs = 57
+table(DEG_GLM1_mcav$condition)
+
+# num up and down regulated (1 = upregulated)
+table(DEG_GLM1_mcav$condition, DEG_GLM1_mcav$UD)
+
+# total list length
+length(listDEG_GLM1_mcav)
+
+# visualize distribution of p-vals and corrected p-vals
+p <- ggplot(data = pvals_GLM1_mcav, aes(x = pvalue, fill = type))
+p <- p + geom_histogram()
+p <- p + theme_bw()
+p <- p + ggtitle("Histogram of raw/adjusted p-values for GLM")
+p <- p + facet_grid(type ~ condition) 
+p <- p + theme(title = element_text(size=10), axis.text.x = element_blank(), 
+               axis.ticks.x = element_blank())
+print(p)
+
+#ggsave("hist_GLM_pvals_mcav.jpeg", p, width=10, height=8)
+```
+
+```{r}
+#write.csv(mcav_smit_DEG_GLM_treatment, "mcav_smit_DEG_GLM_treatment.csv")
+```
+

@@ -64,9 +64,9 @@ ofav_DEG_GLM_treatment$expression = ifelse(ofav_DEG_GLM_treatment$PAdju_BH < 0.0
                      ifelse(ofav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
                      'Stable')
 
-#mcav_DEG_GLM_treatment$expression = ifelse(mcav_DEG_GLM_treatment$PAdju_BH < 0.05 & abs(mcav_DEG_GLM_treatment$logFC) >= 1, 
-                    # ifelse(mcav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
-                    # 'Stable')
+mcav_mote_DEG_GLM_treatment$expression = ifelse(mcav_mote_DEG_GLM_treatment$PAdju_BH < 0.05 & abs(mcav_mote_DEG_GLM_treatment$logFC) >= 1, 
+                     ifelse(mcav_mote_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                     'Stable')
 ```
 
 ```{r}
@@ -75,9 +75,9 @@ ofav_DEG_GLM_treatment$expression_bonf = ifelse(ofav_DEG_GLM_treatment$PAdju_bon
                      ifelse(ofav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
                      'Stable')
 
-#mcav_DEG_GLM_treatment$expression_bonf = ifelse(mcav_DEG_GLM_treatment$PAdju_bonf < 0.05 & abs(mcav_DEG_GLM_treatment$logFC) >= 1, 
-                   #  ifelse(mcav_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
-                   #  'Stable')
+mcav_mote_DEG_GLM_treatment$expression_bonf = ifelse(mcav_mote_DEG_GLM_treatment$PAdju_bonf < 0.05 & abs(mcav_mote_DEG_GLM_treatment$logFC) >= 1, 
+                    ifelse(mcav_mote_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                    'Stable')
 ```
 OFAV
 ```{r}
@@ -89,7 +89,7 @@ ofav_bonf_volc <- ggplot(data = ofav_DEG_GLM_treatment,
   scale_color_manual(values=c("blue", "grey","red"))+
   xlim(c(-4.5, 4.5)) +
   geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 5.729434,lty=4,col="black",lwd=0.8) +
   labs(x="log2(fold change)",
        y="-log10 (adj.p-value)",
        title="OFAV Differential expression - Bonferonni")  +
@@ -108,15 +108,21 @@ ofav_FDR_volc <- ggplot(data = ofav_DEG_GLM_treatment,
   scale_color_manual(values=c("blue", "grey","red"))+
   xlim(c(-4.5, 4.5)) +
   geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 2.663721,lty=4,col="black",lwd=0.8) +
   labs(x="log2(fold change)",
-       y="-log10 (adj.p-value)",
+       y="-log10 (p-value)",
        title="OFAV Differential expression - FDR")  +
   theme_bw()+
   theme(plot.title = element_text(hjust = 0.5), 
         legend.position="right", 
         legend.title = element_blank())
 ```
+
+```{r}
+ofav_FDR_volc
+ofav_bonf_volc
+```
+
 
 ```{r}
 #ggsave("ofav_FDR_volc.jpeg", plot=ofav_FDR_volc, width=8, height=8)
@@ -126,18 +132,18 @@ ofav_FDR_volc <- ggplot(data = ofav_DEG_GLM_treatment,
 
 MCAV
 ```{r}
-ggplot(data = mcav_DEG_GLM_treatment, 
+mcav_bonf_volc <- ggplot(data = mcav_mote_DEG_GLM_treatment, 
             aes(x = logFC, 
-                y = -log10(mcav_DEG_GLM_treatment$PValue), 
+                y = -log10(mcav_mote_DEG_GLM_treatment$PValue), 
                 colour=expression_bonf)) +
   geom_point(alpha=0.4, size=3.5) +
   scale_color_manual(values=c("blue", "grey","red"))+
-  xlim(c(-4.5, 4.5)) +
+  xlim(c(-15, 15)) +
   geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 5.762694,lty=4,col="black",lwd=0.8) +
   labs(x="log2(fold change)",
        y="-log10 (adj.p-value)",
-       title="MCAV Differential expression - Bonferonni")  +
+       title="MCAV Mote Differential expression - Bonferonni")  +
   theme_bw()+
   theme(plot.title = element_text(hjust = 0.5), 
         legend.position="right", 
@@ -145,25 +151,89 @@ ggplot(data = mcav_DEG_GLM_treatment,
 ```
 
 ```{r}
-ggplot(data = mcav_DEG_GLM_treatment, 
+mcav_FDR_volc<- ggplot(data = mcav_mote_DEG_GLM_treatment, 
             aes(x = logFC, 
-                y = -log10(mcav_DEG_GLM_treatment$PValue), 
+                y = -log10(mcav_mote_DEG_GLM_treatment$PValue), 
                 colour=expression)) +
   geom_point(alpha=0.4, size=3.5) +
   scale_color_manual(values=c("blue", "grey","red"))+
-  xlim(c(-4.5, 4.5)) +
+  xlim(c(-15, 15)) +
   geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
-  geom_hline(yintercept = 1.301,lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 3.848689,lty=4,col="black",lwd=0.8) +
   labs(x="log2(fold change)",
        y="-log10 (adj.p-value)",
-       title="MCAV Differential expression - FDR")  +
+       title="MCAV Mote Differential expression - FDR")  +
   theme_bw()+
   theme(plot.title = element_text(hjust = 0.5), 
         legend.position="right", 
         legend.title = element_blank())
 ```
+# to get hline intercept min(-log10(mcav_mote_DEG_GLM_treatment_sign_BH$PValue))
+```{r}
+mcav_FDR_volc
+mcav_bonf_volc
+```
+```{r}
+mcav_smit_DEG_GLM_treatment$expression = ifelse(mcav_smit_DEG_GLM_treatment$PAdju_BH < 0.05 & abs(mcav_smit_DEG_GLM_treatment$logFC) >= 1, 
+                    ifelse(mcav_smit_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                    'Stable')
 
-# GO analysis
+mcav_smit_DEG_GLM_treatment$expression_bonf = ifelse(mcav_smit_DEG_GLM_treatment$PAdju_bonf < 0.05 & abs(mcav_smit_DEG_GLM_treatment$logFC) >= 1, 
+                    ifelse(mcav_smit_DEG_GLM_treatment$logFC> 1 ,'Up','Down'),
+                    'Stable')
+```
+
+```{r}
+mcav_FDR_volc_smit <- ggplot(data = mcav_smit_DEG_GLM_treatment, 
+            aes(x = logFC, 
+                y = -log10(mcav_smit_DEG_GLM_treatment$PValue), 
+                colour=expression)) +
+  geom_point(alpha=0.4, size=3.5) +
+  scale_color_manual(values=c("blue", "grey","red"))+
+  xlim(c(-15, 15)) +
+  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 2.791914,lty=4,col="black",lwd=0.8) +
+  labs(x="log2(fold change)",
+       y="-log10 (adj.p-value)",
+       title="MCAV Smit Differential expression - FDR")  +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        legend.position="right", 
+        legend.title = element_blank())
+
+mcav_FDR_volc_smit
+```
+```{r}
+mcav_bonf_volc_smit <- ggplot(data = mcav_smit_DEG_GLM_treatment, 
+            aes(x = logFC, 
+                y = -log10(mcav_smit_DEG_GLM_treatment$PValue), 
+                colour=expression_bonf)) +
+  geom_point(alpha=0.4, size=3.5) +
+  scale_color_manual(values=c("blue", "grey","red"))+
+  xlim(c(-15, 15)) +
+  geom_vline(xintercept=c(-1,1),lty=4,col="black",lwd=0.8) +
+  geom_hline(yintercept = 5.650139,lty=4,col="black",lwd=0.8) +
+  labs(x="log2(fold change)",
+       y="-log10 (adj.p-value)",
+       title="MCAV Smit Differential expression - FDR")  +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        legend.position="right", 
+        legend.title = element_blank())
+
+mcav_bonf_volc_smit
+```
+
+```{r}
+#ggsave("mcav_FDR_volc.jpeg", plot=mcav_FDR_volc, width=8, height=8)
+#ggsave("mcav_bonf_volc.jpeg", plot=mcav_bonf_volc, width=8, height=8)
+#ggsave("mcav_FDR_volc_smit.jpeg", plot=mcav_FDR_volc_smit, width=8, height=8)
+#ggsave("mcav_bonf_volc_smit.jpeg", plot=mcav_bonf_volc_smit, width=8, height=8)
+```
+
+
+
+# GO analysis -- not working
 Ref: https://ucdavis-bioinformatics-training.github.io/2018-June-RNA-Seq-Workshop/friday/enrichment.html
 ```{r}
 geneList <- ofav_annot_DEG_emap$PAdju_bonf
@@ -211,3 +281,38 @@ gomwuStats(input, goDatabase, goAnnotations, goDivision,
 )
 ```
 
+```{r}
+dds_ofav_DEG <- DESeq(countdata=dds_ofav, colData=ofav_meta_dd, design= ~Correct_treatment)
+```
+```{r}
+threshold_OE <- ofav_DEG_GLM_treatment$PAdju_BH < 0.05
+ofav_DEG_GLM_treatment$threshold <- threshold_OE
+
+ma_ofav <- ggplot(ofav_DEG_GLM_treatment, aes(y=logFC, x=logCPM, colour=threshold)) + geom_point() +
+  scale_color_manual(values=c("black", "red")) +
+  geom_hline(yintercept=0) +
+  theme_bw()
+
+ggsave("ma_ofav.jpeg", plot=ma_ofav, width=8, height=6)
+```
+```{r}
+threshold_OE <- mcav_mote_DEG_GLM_treatment$PAdju_BH < 0.05
+mcav_DEG_GLM_treatment$threshold <- threshold_OE
+
+ggplot(mcav_mote_DEG_GLM_treatment, aes(y=logFC, x=logCPM, colour=threshold)) + geom_point() +
+  scale_color_manual(values=c("black", "red")) +
+  geom_hline(yintercept=0) +
+  theme_bw()
+```
+
+```{r}
+ofav_metabolic <- ofav_annot_DEG_emap[grep("metabolic", ofav_annot_DEG_emap$X.4),]
+ofav_metabolic_sign <- subset(ofav_metabolic, ofav_metabolic$PAdju_BH < 0.05)
+head(ofav_metabolic_sign)
+```
+
+```{r}
+ofav_metabolic <- ofav_annot_DEG_emap[grep("methylation", ofav_annot_DEG_emap$X.4),]
+ofav_metabolic_sign <- subset(ofav_metabolic, ofav_metabolic$PAdju_BH < 0.05)
+head(ofav_metabolic_sign)
+```
